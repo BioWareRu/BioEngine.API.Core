@@ -185,6 +185,11 @@ namespace BioEngine.Core.API
 
         protected T MapContentData(T entity, T newData)
         {
+            if (entity.AuthorId == 0)
+            {
+                entity.AuthorId = CurrentUser.Id;
+            }
+
             entity.Title = newData.Title;
             entity.Url = newData.Url;
             entity.Description = newData.Description;

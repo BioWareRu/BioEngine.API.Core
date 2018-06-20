@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BioEngine.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -14,6 +15,15 @@ namespace BioEngine.Core.API
         protected BaseController(BaseControllerContext context)
         {
             Logger = context.Logger;
+        }
+        
+        protected IUser CurrentUser
+        {
+            get
+            {
+                var feature = HttpContext.Features.Get<ICurrentUserFeature>();
+                return feature.User;
+            }
         }
     }
 }
