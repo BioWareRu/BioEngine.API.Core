@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using BioEngine.Core.API.Interfaces;
 using BioEngine.Core.API.Response;
 using BioEngine.Core.DB;
-using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
 using BioEngine.Core.Repository;
+using BioEngine.Core.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +32,7 @@ namespace BioEngine.Core.API
 
         protected QueryContext<T, TPkType> GetQueryContext()
         {
-            var context = new QueryContext<T, TPkType>();
+            var context = new QueryContext<T, TPkType> {IncludeUnpublished = true};
             if (ControllerContext.HttpContext.Request.Query.ContainsKey("limit"))
             {
                 context.Limit = int.Parse(ControllerContext.HttpContext.Request.Query["limit"]);
@@ -68,7 +68,8 @@ namespace BioEngine.Core.API
                 return Created(result.Entity);
             }
 
-            return Errors(500, result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
+            return Errors(StatusCodes.Status422UnprocessableEntity,
+                result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
         }
 
         [HttpPut("{id}")]
@@ -88,7 +89,14 @@ namespace BioEngine.Core.API
                 return Updated(result.Entity);
             }
 
-            return Errors(500, result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
+            return Errors(StatusCodes.Status422UnprocessableEntity,
+                result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
+        }
+
+        [HttpPost("upload")]
+        public virtual Task<ActionResult<StorageItem>> Upload([FromQuery] string name)
+        {
+            throw new NotImplementedException();
         }
 
         protected abstract T MapEntity(T entity, T newData);
@@ -150,52 +158,6 @@ namespace BioEngine.Core.API
 
         protected RestController(BaseControllerContext context) : base(context)
         {
-        }
-    }
-
-    public abstract class SectionController<T, TId> : RestController<T, TId> where T : Section, IEntity<TId>
-    {
-        protected SectionController(BaseControllerContext context) : base(context)
-        {
-        }
-
-        protected T MapSectionData(T entity, T newData)
-        {
-            entity.ParentId = newData.ParentId;
-            entity.ForumId = newData.ForumId;
-            entity.Title = newData.Title;
-            entity.Url = newData.Url;
-            entity.Logo = newData.Logo;
-            entity.LogoSmall = newData.LogoSmall;
-            entity.Description = newData.Description;
-            entity.ShortDescription = newData.ShortDescription;
-            entity.Keywords = newData.Keywords;
-            entity.Hashtag = newData.Hashtag;
-            entity.SiteIds = newData.SiteIds;
-
-            return entity;
-        }
-    }
-
-    public abstract class ContentController<T, TId> : RestController<T, TId> where T : ContentItem, IEntity<TId>
-    {
-        protected ContentController(BaseControllerContext context) : base(context)
-        {
-        }
-
-        protected T MapContentData(T entity, T newData)
-        {
-            if (entity.AuthorId == 0)
-            {
-                entity.AuthorId = CurrentUser.Id;
-            }
-
-            entity.Title = newData.Title;
-            entity.Url = newData.Url;
-            entity.Description = newData.Description;
-            entity.SectionIds = newData.SectionIds;
-
-            return entity;
         }
     }
 }

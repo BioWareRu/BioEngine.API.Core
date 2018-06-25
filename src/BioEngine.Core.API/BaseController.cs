@@ -11,12 +11,14 @@ namespace BioEngine.Core.API
     public abstract class BaseController : Controller
     {
         protected ILogger Logger { get; }
+        protected IStorage Storage { get; }
 
         protected BaseController(BaseControllerContext context)
         {
             Logger = context.Logger;
+            Storage = context.Storage;
         }
-        
+
         protected IUser CurrentUser
         {
             get
