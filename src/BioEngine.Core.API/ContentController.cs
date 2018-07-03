@@ -20,6 +20,7 @@ namespace BioEngine.Core.API
             entity.Url = newData.Url;
             entity.Description = newData.Description;
             entity.SectionIds = newData.SectionIds;
+            entity.TagIds = newData.TagIds;
 
             return entity;
         }

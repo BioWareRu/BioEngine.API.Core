@@ -29,6 +29,13 @@ namespace BioEngine.Core.API
             var result = await GetRepository().GetAll(GetQueryContext());
             return List(result);
         }
+        
+        [HttpGet("count")]
+        public virtual async Task<ActionResult<int>> Count()
+        {
+            var result = await GetRepository().Count(GetQueryContext());
+            return Ok(result);
+        }
 
         protected QueryContext<T, TPkType> GetQueryContext()
         {
