@@ -1,28 +1,71 @@
-﻿using BioEngine.Core.Entities;
+﻿using System.Threading.Tasks;
+using BioEngine.Core.API.Request;
+using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
 
 namespace BioEngine.Core.API
 {
-    public abstract class ContentController<T, TId> : RestController<T, TId> where T : ContentItem, IEntity<TId>
+    public abstract class ContentController<TRestModel, T, TId> : RestController<TRestModel, T, TId>
+        where T : ContentItem, IEntity<TId> where TRestModel : ContentEntityRestModel<T, TId>
     {
         protected ContentController(BaseControllerContext context) : base(context)
         {
         }
 
-        protected T MapContentData(T entity, T newData)
+        protected override async Task<TRestModel> MapRestModel(T domainModel)
         {
-            if (entity.AuthorId == 0)
+            var restModel = await base.MapRestModel(domainModel);
+            restModel.Type = domainModel.Type;
+            restModel.Title = domainModel.Title;
+            restModel.Url = domainModel.Url;
+            restModel.Description = domainModel.Description;
+            restModel.SectionIds = domainModel.SectionIds;
+            restModel.TagIds = domainModel.TagIds;
+            if (domainModel is ITypedEntity typedEntity)
             {
-                entity.AuthorId = CurrentUser.Id;
+                restModel.TypeTitle = typedEntity.TypeTitle;
+            }
+            return restModel;
+        }
+
+        protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
+        {
+            domainModel = await base.MapDomainModel(restModel, domainModel);
+            if (domainModel.AuthorId == 0)
+            {
+                domainModel.AuthorId = CurrentUser.Id;
             }
 
-            entity.Title = newData.Title;
-            entity.Url = newData.Url;
-            entity.Description = newData.Description;
-            entity.SectionIds = newData.SectionIds;
-            entity.TagIds = newData.TagIds;
+            domainModel.Title = restModel.Title;
+            domainModel.Url = restModel.Url;
+            domainModel.Description = restModel.Description;
+            domainModel.SectionIds = restModel.SectionIds;
+            domainModel.TagIds = restModel.TagIds;
+            return domainModel;
+        }
+    }
 
-            return entity;
+    public abstract class ContentController<TRestModel, T, TId, TData> : ContentController<TRestModel, T, TId>
+        where TRestModel : ContentEntityRestModel<T, TId, TData>
+        where T : ContentItem<TData>, IEntity<TId>
+        where TData : TypedData, new()
+    {
+        protected ContentController(BaseControllerContext context) : base(context)
+        {
+        }
+
+        protected override async Task<TRestModel> MapRestModel(T domainModel)
+        {
+            var restModel = await base.MapRestModel(domainModel);
+            restModel.Data = domainModel.Data;
+            return restModel;
+        }
+
+        protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
+        {
+            domainModel = await base.MapDomainModel(restModel, domainModel);
+            domainModel.Data = restModel.Data;
+            return domainModel;
         }
     }
 }

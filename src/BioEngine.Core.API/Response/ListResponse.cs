@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Response
 {
-    public class ListResponse<T, TPkType> : RestResponse where T : IEntity<TPkType>
+    public class ListResponse<T> : RestResponse
     {
         public ListResponse(IEnumerable<T> data, int totalitem) : base(StatusCodes.Status200OK)
         {

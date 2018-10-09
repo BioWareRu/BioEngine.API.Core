@@ -1,4 +1,5 @@
 ﻿using BioEngine.Core.Interfaces;
+using BioEngine.Core.Providers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,11 +13,13 @@ namespace BioEngine.Core.API
     {
         protected ILogger Logger { get; }
         protected IStorage Storage { get; }
+        protected SettingsProvider SettingsProvider { get; }
 
         protected BaseController(BaseControllerContext context)
         {
             Logger = context.Logger;
             Storage = context.Storage;
+            SettingsProvider = context.SettingsProvider;
         }
 
         protected IUser CurrentUser

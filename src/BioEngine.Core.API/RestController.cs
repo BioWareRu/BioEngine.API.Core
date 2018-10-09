@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Core.API.Entities;
 using BioEngine.Core.API.Interfaces;
+using BioEngine.Core.API.Request;
 using BioEngine.Core.API.Response;
 using BioEngine.Core.DB;
 using BioEngine.Core.Interfaces;
@@ -20,26 +22,106 @@ namespace BioEngine.Core.API
         }
     }
 
-
-    public abstract class RestController<T, TPkType> : RestController where T : class, IEntity<TPkType>
+    public abstract class RestController<TRestModel, TEntity, TEntityPk> : RestController
+        where TEntity : class, IEntity<TEntityPk> where TRestModel : RestModel<TEntity, TEntityPk>
     {
+        protected virtual Task<TRestModel> MapRestModel(TEntity domainModel)
+        {
+            var restModel = Activator.CreateInstance<TRestModel>();
+            restModel.Id = domainModel.Id;
+            restModel.DateAdded = domainModel.DateAdded;
+            restModel.DateUpdated = domainModel.DateUpdated;
+            restModel.IsPublished = domainModel.IsPublished;
+            restModel.DatePublished = domainModel.DatePublished;
+            restModel.SettingsGroups = domainModel.Settings.Select(s => Settings.Create(s.Value)).ToList();
+            return Task.FromResult(restModel);
+        }
+
+        protected virtual Task<TEntity> MapDomainModel(TRestModel restModel, TEntity domainModel = null)
+        {
+            domainModel = domainModel ?? Activator.CreateInstance<TEntity>();
+            domainModel.Settings = restModel.SettingsGroups?.Select(s => s.GetSettings())
+                .ToDictionary(s => s.GetType().FullName?.Replace("-", "."), s => s);
+            return Task.FromResult(domainModel);
+        }
+
         [HttpGet]
-        public virtual async Task<ActionResult<ListResponse<T, TPkType>>> Get()
+        public virtual async Task<ActionResult<ListResponse<TRestModel>>> Get()
         {
             var result = await GetRepository().GetAll(GetQueryContext());
-            return List(result);
-        }
-        
-        [HttpGet("count")]
-        public virtual async Task<ActionResult<int>> Count()
-        {
-            var result = await GetRepository().Count(GetQueryContext());
-            return Ok(result);
+            return await List(result);
         }
 
-        protected QueryContext<T, TPkType> GetQueryContext()
+        [HttpGet("{id}")]
+        public virtual async Task<ActionResult<TRestModel>> Get(TEntityPk id)
         {
-            var context = new QueryContext<T, TPkType> {IncludeUnpublished = true};
+            return await MapRestModel(await GetRepository().GetById(id));
+        }
+        
+        [HttpGet("new")]
+        public virtual async Task<ActionResult<TRestModel>> New()
+        {
+            return await MapRestModel(await GetRepository().New());
+        }
+
+        [HttpPost]
+        public virtual async Task<ActionResult<TRestModel>> Add(TRestModel item)
+        {
+            var entity = await MapDomainModel(item, Activator.CreateInstance<TEntity>());
+
+            var result = await GetRepository().Add(entity);
+            if (result.IsSuccess)
+            {
+                await AfterSave(item, result.Entity);
+                return Created(await MapRestModel(result.Entity));
+            }
+
+            return Errors(StatusCodes.Status422UnprocessableEntity,
+                result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
+        }
+
+        [HttpPut("{id}")]
+        public virtual async Task<ActionResult<TRestModel>> Update(TEntityPk id,
+            TRestModel item)
+        {
+            var entity = await GetRepository().GetById(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            entity = await MapDomainModel(item, entity);
+
+            var result = await GetRepository().Update(entity);
+            if (result.IsSuccess)
+            {
+                await AfterSave(item, result.Entity);
+                return Updated(await MapRestModel(result.Entity));
+            }
+
+            return Errors(StatusCodes.Status422UnprocessableEntity,
+                result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
+        }
+
+        [HttpPost("upload")]
+        public virtual Task<ActionResult<StorageItem>> Upload([FromQuery] string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        //protected abstract TRest MapEntity(TRest entity, TRest newData);
+
+        [HttpDelete("{id}")]
+        public virtual async Task<ActionResult<TRestModel>> Delete(TEntityPk id)
+        {
+            var result = await GetRepository().Delete(id);
+            if (result) return Deleted();
+            return BadRequest();
+        }
+
+        protected QueryContext<TEntity, TEntityPk> GetQueryContext()
+        {
+            var context = new QueryContext<TEntity, TEntityPk> {IncludeUnpublished = true};
             if (ControllerContext.HttpContext.Request.Query.ContainsKey("limit"))
             {
                 context.Limit = int.Parse(ControllerContext.HttpContext.Request.Query["limit"]);
@@ -58,102 +140,53 @@ namespace BioEngine.Core.API
             return context;
         }
 
-        [HttpGet("{id}")]
-        public virtual async Task<ActionResult<T>> Get(TPkType id)
-        {
-            return await GetRepository().GetById(id);
-        }
 
-        [HttpPost]
-        public virtual async Task<ActionResult<T>> Add(T item)
-        {
-            var entity = MapEntity(Activator.CreateInstance<T>(), item);
+        protected abstract BioRepository<TEntity, TEntityPk> GetRepository();
 
-            var result = await GetRepository().Add(entity);
-            if (result.IsSuccess)
-            {
-                return Created(result.Entity);
-            }
-
-            return Errors(StatusCodes.Status422UnprocessableEntity,
-                result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
-        }
-
-        [HttpPut("{id}")]
-        public virtual async Task<ActionResult<T>> Update(TPkType id, T item)
-        {
-            var entity = await GetRepository().GetById(id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-
-            entity = MapEntity(entity, item);
-
-            var result = await GetRepository().Update(entity);
-            if (result.IsSuccess)
-            {
-                return Updated(result.Entity);
-            }
-
-            return Errors(StatusCodes.Status422UnprocessableEntity,
-                result.Errors.Select(e => new ValidationErrorResponse(e.PropertyName, e.ErrorMessage)));
-        }
-
-        [HttpPost("upload")]
-        public virtual Task<ActionResult<StorageItem>> Upload([FromQuery] string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected abstract T MapEntity(T entity, T newData);
-
-        [HttpDelete("{id}")]
-        public virtual async Task<ActionResult<T>> Delete(TPkType id)
-        {
-            var result = await GetRepository().Delete(id);
-            if (result) return Deleted();
-            return BadRequest();
-        }
-
-        protected abstract BioRepository<T, TPkType> GetRepository();
-
-        protected new ActionResult<T> NotFound()
+        protected new ActionResult<TRestModel> NotFound()
         {
             return Errors(StatusCodes.Status404NotFound, new[] {new RestErrorResponse("Not Found")});
         }
 
-        protected ActionResult<T> Created(T model)
+        protected ActionResult<TRestModel> Created(TRestModel model)
         {
             return SaveResponse(StatusCodes.Status201Created, model);
         }
 
-        protected ActionResult<T> Updated(T model)
+        protected ActionResult<TRestModel> Updated(TRestModel model)
         {
             return SaveResponse(StatusCodes.Status202Accepted, model);
         }
 
-        protected ActionResult<T> Deleted()
+        protected ActionResult<TRestModel> Deleted()
         {
             return SaveResponse(StatusCodes.Status204NoContent, null);
         }
 
-        protected ActionResult<T> Errors(int code, IEnumerable<IErrorInterface> errors)
+        protected ActionResult<TRestModel> Errors(int code, IEnumerable<IErrorInterface> errors)
         {
             return new ObjectResult(new RestResponse(code, errors)) {StatusCode = code};
         }
 
-        private ActionResult<T> SaveResponse(int code, T model)
+        private ActionResult<TRestModel> SaveResponse(int code, TRestModel model)
         {
-            return new ObjectResult(new SaveModelResponse<T>(code, model)) {StatusCode = code};
+            return new ObjectResult(new SaveModelResponse<TRestModel>(code, model))
+                {StatusCode = code};
         }
 
-        protected ActionResult<ListResponse<T, TPkType>> List((IEnumerable<T> items, int itemsCount) result)
+        protected async Task<ActionResult<ListResponse<TRestModel>>> List(
+            (IEnumerable<TEntity> items, int itemsCount) result)
         {
-            return Ok(new ListResponse<T, TPkType>(result.items, result.itemsCount));
+            var restModels = new List<TRestModel>();
+            foreach (var item in result.items)
+            {
+                restModels.Add(await MapRestModel(item));
+            }
+
+            return Ok(new ListResponse<TRestModel>(restModels, result.itemsCount));
         }
 
-        protected ActionResult<T> Model(T model)
+        protected ActionResult<TRestModel> Model(TRestModel model)
         {
             if (model == null)
             {
@@ -165,6 +198,18 @@ namespace BioEngine.Core.API
 
         protected RestController(BaseControllerContext context) : base(context)
         {
+        }
+
+        [HttpGet("count")]
+        public virtual async Task<ActionResult<int>> Count()
+        {
+            var result = await GetRepository().Count(GetQueryContext());
+            return Ok(result);
+        }
+
+        protected virtual Task AfterSave(TRestModel restModel, TEntity domainModel)
+        {
+            return Task.CompletedTask;
         }
     }
 }
