@@ -38,7 +38,7 @@ namespace BioEngine.Core.API.Entities
                 }
 
                 var property = new SettingsProperty(propertyInfo.Key.Replace(".", "-"), propertyInfo.Name,
-                    propertyInfo.Type, values);
+                    propertyInfo.Type, values, propertyInfo.IsRequired);
                 restModel.Properties.Add(property);
             }
 
@@ -109,14 +109,17 @@ namespace BioEngine.Core.API.Entities
         public string Name { get; }
         public string Key { get; }
         public SettingType Type { get; }
+        public bool IsRequired { get; }
         public List<SettingsPropertyValue> Values { get; }
 
-        public SettingsProperty(string key, string name, SettingType type, List<SettingsPropertyValue> values)
+        public SettingsProperty(string key, string name, SettingType type, List<SettingsPropertyValue> values,
+            bool isRequired)
         {
             Key = key;
             Name = name;
             Type = type;
             Values = values;
+            IsRequired = isRequired;
         }
     }
 
