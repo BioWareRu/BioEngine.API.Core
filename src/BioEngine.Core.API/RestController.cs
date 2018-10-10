@@ -33,15 +33,14 @@ namespace BioEngine.Core.API
             restModel.DateUpdated = domainModel.DateUpdated;
             restModel.IsPublished = domainModel.IsPublished;
             restModel.DatePublished = domainModel.DatePublished;
-            restModel.SettingsGroups = domainModel.Settings.Select(s => Settings.Create(s.Value)).ToList();
+            restModel.SettingsGroups = domainModel.Settings.Select(Settings.Create).ToList();
             return Task.FromResult(restModel);
         }
 
         protected virtual Task<TEntity> MapDomainModel(TRestModel restModel, TEntity domainModel = null)
         {
             domainModel = domainModel ?? Activator.CreateInstance<TEntity>();
-            domainModel.Settings = restModel.SettingsGroups?.Select(s => s.GetSettings())
-                .ToDictionary(s => s.GetType().FullName?.Replace("-", "."), s => s);
+            domainModel.Settings = restModel.SettingsGroups?.Select(s => s.GetSettings()).ToList();
             return Task.FromResult(domainModel);
         }
 
@@ -57,7 +56,7 @@ namespace BioEngine.Core.API
         {
             return await MapRestModel(await GetRepository().GetById(id));
         }
-        
+
         [HttpGet("new")]
         public virtual async Task<ActionResult<TRestModel>> New()
         {

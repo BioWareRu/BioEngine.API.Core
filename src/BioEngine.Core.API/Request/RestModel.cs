@@ -18,7 +18,7 @@ namespace BioEngine.Core.API.Request
         public bool IsPublished { get; set; }
         public DateTimeOffset? DatePublished { get; set; }
 
-        [JsonIgnore] public Dictionary<string, SettingsBase> Settings { get; set; }
+        [JsonIgnore] public List<SettingsEntry> Settings { get; set; }
         public List<Settings> SettingsGroups { get; set; }
     }
 
