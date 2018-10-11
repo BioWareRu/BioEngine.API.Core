@@ -23,7 +23,7 @@ steps:
   inputs:
     command: pack
     nobuild: true
-    configuration: 'release'
+    configuration: 'Release'
     versioningScheme: byEnvVar
     versionEnvVar: 'Version'
     verbosityPack: 'minimal'
