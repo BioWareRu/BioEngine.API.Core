@@ -18,7 +18,6 @@ steps:
     command: pack
     arguments: '--no-restore'
     configuration: 'release'
-    nobuild: true
     versioningScheme: byEnvVar
     versionEnvVar: 'Version'
     verbosityPack: 'minimal'
