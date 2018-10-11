@@ -12,16 +12,11 @@ steps:
     feedsToUse: 'select'
     verbosityRestore: 'minimal'
     vstsFeed: 'BW'
-    
-- task: DotNetCoreCLI@2
-  inputs:
-    command: custom
-    custom: 'build --no-restore -c Release'
-    projects: '**/*.csproj'
-    
+  
 - task: DotNetCoreCLI@2
   inputs:
     command: pack
+    arguments: '--no-restore'
     configuration: 'release'
     nobuild: true
     versioningScheme: byEnvVar
