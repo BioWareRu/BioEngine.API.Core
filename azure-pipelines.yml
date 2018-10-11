@@ -8,7 +8,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: restore
-    projects: **/.csproj
+    projects: '**/*.csproj'
     feedsToUse: 'select'
     vstsFeed: 'BW'
     
