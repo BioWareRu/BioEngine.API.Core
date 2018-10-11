@@ -7,13 +7,18 @@ variables:
 steps:
 - task: DotNetCoreCLI@2
   inputs:
-    command: pack
+    command: restore
+    feedsToUse: 'select'
+    vstsFeed: 'BW'
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: custom
+    custom: 'pack --no-restore'
     configuration: 'release'
     versioningScheme: byEnvVar
     versionEnvVar: 'Version'
     verbosityPack: 'detailed'
     packDirectory: '$(build.artifactStagingDirectory)'
-    feedsToUse: 'select'
-    vstsFeed: 'BW'
     
 - task: PublishBuildArtifacts@1
