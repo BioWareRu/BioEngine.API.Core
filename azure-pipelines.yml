@@ -14,8 +14,7 @@ steps:
     
 - task: DotNetCoreCLI@2
   inputs:
-    command: custom
-    custom: 'pack --no-restore'
+    command: pack
     configuration: 'release'
     versioningScheme: byEnvVar
     versionEnvVar: 'Version'
