@@ -15,8 +15,15 @@ steps:
     
 - task: DotNetCoreCLI@2
   inputs:
+    command: custom
+    custom: 'build --no-restore -c Release'
+    projects: '**/*.csproj'
+    
+- task: DotNetCoreCLI@2
+  inputs:
     command: pack
     configuration: 'release'
+    nobuild: true
     versioningScheme: byEnvVar
     versionEnvVar: 'Version'
     verbosityPack: 'minimal'
