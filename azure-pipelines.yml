@@ -11,7 +11,7 @@ steps:
     configuration: 'release'
     versioningScheme: byEnvVar
     versionEnvVar: 'Version'
-    verbosityPack: 'minimal'
+    verbosityPack: 'detailed'
     packDirectory: '$(build.artifactStagingDirectory)'
     feedsToUse: 'select'
     vstsFeed: 'BW'
