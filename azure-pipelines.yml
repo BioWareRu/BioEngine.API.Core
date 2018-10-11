@@ -29,4 +29,10 @@ steps:
     verbosityPack: 'minimal'
     packDirectory: '$(build.artifactStagingDirectory)'
     
-- task: PublishBuildArtifacts@1
+- task: DotNetCoreCLI@2
+  inputs:
+    command: push
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'BW'
+    versioningScheme: byEnvVar
+    versionEnvVar: 'Version'
