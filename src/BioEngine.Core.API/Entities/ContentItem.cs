@@ -2,7 +2,7 @@
 
 namespace BioEngine.Core.API.Entities
 {
-    public class ContentEntityItem : ContentEntityRestModel<Core.Entities.ContentItem, int>
+    public class ContentEntityItem : ContentEntityRestModel<int>
     {
     }
 

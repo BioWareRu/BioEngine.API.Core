@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BioEngine.Core.API
 {
     public abstract class SectionController<TRestModel, T, TId, TData> : SectionController<TRestModel, T, TId>
-        where TRestModel : SectionRestModel<T, TId, TData>
+        where TRestModel : SectionRestModel<TId, TData>
         where T : Section<TData>, IEntity<TId>
         where TData : TypedData, new()
     {
@@ -34,7 +34,7 @@ namespace BioEngine.Core.API
 
     public abstract class SectionController<TRestModel, T, TId> : RestController<TRestModel, T, TId>
         where T : Section, IEntity<TId>
-        where TRestModel : SectionRestModel<T, TId>
+        where TRestModel : SectionRestModel<TId>
     {
         protected SectionController(BaseControllerContext context) : base(context)
         {
@@ -71,6 +71,7 @@ namespace BioEngine.Core.API
             return restModel;
         }
 
+        // ReSharper disable once OptionalParameterHierarchyMismatch
         protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
         {
             domainModel = await base.MapDomainModel(restModel, domainModel);

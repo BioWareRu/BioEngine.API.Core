@@ -2,7 +2,7 @@
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Tag : RestModel<Core.Entities.Tag, int>
+    public class Tag : RestModel<int>
     {
         public string Name { get; set; }
     }

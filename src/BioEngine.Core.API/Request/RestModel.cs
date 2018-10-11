@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Request
 {
-    public abstract class RestModel<T, TPk> : IEntity<TPk> where T : class, IEntity<TPk>
+    public abstract class RestModel<TPk> : IEntity<TPk>
     {
         public object GetId() => Id;
 
@@ -22,20 +22,18 @@ namespace BioEngine.Core.API.Request
         public List<Settings> SettingsGroups { get; set; }
     }
 
-    public abstract class SiteEntityRestModel<T, TPk> : RestModel<T, TPk>, ISiteEntity<TPk>
-        where T : class, IEntity<TPk>
+    public abstract class SiteEntityRestModel<TPk> : RestModel<TPk>, ISiteEntity<TPk>
     {
         public int[] SiteIds { get; set; }
     }
 
-    public abstract class SectionEntityRestModel<T, TPk> : SiteEntityRestModel<T, TPk>, ISectionEntity<TPk>
-        where T : class, IEntity<TPk>
+    public abstract class SectionEntityRestModel<TPk> : SiteEntityRestModel<TPk>, ISectionEntity<TPk>
     {
         public int[] SectionIds { get; set; }
         public int[] TagIds { get; set; }
     }
 
-    public abstract class SectionRestModel<T, TPk> : SiteEntityRestModel<T, TPk> where T : class, IEntity<TPk>
+    public abstract class SectionRestModel<TPk> : SiteEntityRestModel<TPk>
     {
         public virtual int Type { get; set; }
         public string TypeTitle { get; set; }
@@ -47,14 +45,12 @@ namespace BioEngine.Core.API.Request
         public virtual string Hashtag { get; set; }
     }
 
-    public abstract class SectionRestModel<T, TPk, TData> : SectionRestModel<T, TPk>, ITypedEntity<TData>
-        where T : class, IEntity<TPk> where TData : TypedData, new()
+    public abstract class SectionRestModel<TPk, TData> : SectionRestModel<TPk>, ITypedEntity<TData> where TData : TypedData, new()
     {
         public TData Data { get; set; }
     }
 
-    public abstract class ContentEntityRestModel<T, TPk> : SectionEntityRestModel<T, TPk>, IContentEntity<TPk>
-        where T : class, IEntity<TPk>
+    public abstract class ContentEntityRestModel<TPk> : SectionEntityRestModel<TPk>, IContentEntity<TPk>
     {
         public int Type { get; set; }
         public int AuthorId { get; set; }
@@ -65,8 +61,7 @@ namespace BioEngine.Core.API.Request
         public bool IsPinned { get; set; }
     }
 
-    public abstract class ContentEntityRestModel<T, TPk, TData> : ContentEntityRestModel<T, TPk>
-        where T : class, IEntity<TPk> where TData : TypedData, new()
+    public abstract class ContentEntityRestModel<TPk, TData> : ContentEntityRestModel<TPk> where TData : TypedData, new()
     {
         public TData Data { get; set; }
     }

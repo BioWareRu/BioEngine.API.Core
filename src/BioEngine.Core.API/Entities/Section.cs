@@ -2,7 +2,7 @@
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Section : SectionRestModel<Core.Entities.Section, int>
+    public class Section : SectionRestModel<int>
     {
     }
 }

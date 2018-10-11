@@ -6,7 +6,7 @@ using BioEngine.Core.Interfaces;
 namespace BioEngine.Core.API
 {
     public abstract class ContentController<TRestModel, T, TId> : RestController<TRestModel, T, TId>
-        where T : ContentItem, IEntity<TId> where TRestModel : ContentEntityRestModel<T, TId>
+        where T : ContentItem, IEntity<TId> where TRestModel : ContentEntityRestModel<TId>
     {
         protected ContentController(BaseControllerContext context) : base(context)
         {
@@ -28,6 +28,7 @@ namespace BioEngine.Core.API
             return restModel;
         }
 
+        // ReSharper disable once OptionalParameterHierarchyMismatch
         protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
         {
             domainModel = await base.MapDomainModel(restModel, domainModel);
@@ -46,7 +47,7 @@ namespace BioEngine.Core.API
     }
 
     public abstract class ContentController<TRestModel, T, TId, TData> : ContentController<TRestModel, T, TId>
-        where TRestModel : ContentEntityRestModel<T, TId, TData>
+        where TRestModel : ContentEntityRestModel<TId, TData>
         where T : ContentItem<TData>, IEntity<TId>
         where TData : TypedData, new()
     {

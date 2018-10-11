@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BioEngine.Core.Providers;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Entities
@@ -92,7 +93,7 @@ namespace BioEngine.Core.API.Entities
                     parsedValue = Enum.Parse(enumType, value.ToString());
             }
 
-            if (propertyType == typeof(bool))
+            else if (propertyType == typeof(bool))
                 parsedValue = value.ToString() == "1" ||
                               value.ToString() == "true" ||
                               value.ToString() == "on" ||
@@ -100,10 +101,12 @@ namespace BioEngine.Core.API.Entities
             else if (propertyType == typeof(Uri))
                 parsedValue = new Uri(Convert.ToString(value));
             else parsedValue = Convert.ChangeType(value, propertyType);
+
             return parsedValue;
         }
     }
 
+    [PublicAPI]
     public class SettingsProperty
     {
         public string Name { get; }

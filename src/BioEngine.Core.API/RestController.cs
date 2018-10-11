@@ -23,7 +23,7 @@ namespace BioEngine.Core.API
     }
 
     public abstract class RestController<TRestModel, TEntity, TEntityPk> : RestController
-        where TEntity : class, IEntity<TEntityPk> where TRestModel : RestModel<TEntity, TEntityPk>
+        where TEntity : class, IEntity<TEntityPk> where TRestModel : RestModel<TEntityPk>
     {
         protected virtual Task<TRestModel> MapRestModel(TEntity domainModel)
         {
