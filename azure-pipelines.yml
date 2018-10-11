@@ -1,0 +1,24 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  Major: '3'
+  Minor: '0'
+  Patch: '0'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: pack
+    configuration: 'release'
+    versioningScheme: byPrereleaseNumber
+    majorVersion: '$(Major)'
+    minorVersion: '$(Minor)'
+    patchVersion: '$(Patch)'
+    verbosityPack: 'minimal'
+    verbosityRestore: 'minimal'
+    packDirectory: '$(build.artifactStagingDirectory)'
+    feedsToUse: 'select'
+    vstsFeed: 'BW'
+    
+- task: PublishBuildArtifacts@1
