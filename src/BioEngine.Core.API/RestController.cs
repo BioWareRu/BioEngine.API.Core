@@ -63,6 +63,42 @@ namespace BioEngine.Core.API
             return await MapRestModel(await GetRepository().New());
         }
 
+        [HttpPost("publish/{id}")]
+        public virtual async Task<ActionResult<TRestModel>> Publish(TEntityPk id)
+        {
+            var entity = await GetRepository().GetById(id);
+            if (entity != null)
+            {
+                if (entity.IsPublished)
+                {
+                    return BadRequest();
+                }
+
+                await GetRepository().Publish(entity);
+                return await MapRestModel(entity);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost("hide/{id}")]
+        public virtual async Task<ActionResult<TRestModel>> Hide(TEntityPk id)
+        {
+            var entity = await GetRepository().GetById(id);
+            if (entity != null)
+            {
+                if (!entity.IsPublished)
+                {
+                    return BadRequest();
+                }
+
+                await GetRepository().UnPublish(entity);
+                return await MapRestModel(entity);
+            }
+
+            return NotFound();
+        }
+
         [HttpPost]
         public virtual async Task<ActionResult<TRestModel>> Add(TRestModel item)
         {
