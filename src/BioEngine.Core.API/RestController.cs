@@ -8,21 +8,18 @@ using BioEngine.Core.API.Request;
 using BioEngine.Core.API.Response;
 using BioEngine.Core.DB;
 using BioEngine.Core.Interfaces;
-using BioEngine.Core.Repository;
 using BioEngine.Core.Storage;
+using BioEngine.Core.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Core.API
 {
-    public abstract class RestController : BaseController
-    {
-        protected RestController(BaseControllerContext context) : base(context)
-        {
-        }
-    }
-
-    public abstract class RestController<TRestModel, TEntity, TEntityPk> : RestController
+    [ApiController]
+    [Authorize]
+    [Route("v1/[controller]")]
+    public abstract class RestController<TRestModel, TEntity, TEntityPk> : BaseController
         where TEntity : class, IEntity<TEntityPk> where TRestModel : RestModel<TEntityPk>
     {
         protected virtual Task<TRestModel> MapRestModel(TEntity domainModel)
@@ -47,26 +44,26 @@ namespace BioEngine.Core.API
         [HttpGet]
         public virtual async Task<ActionResult<ListResponse<TRestModel>>> Get()
         {
-            var result = await GetRepository().GetAll(GetQueryContext());
+            var result = await Repository.GetAll(GetQueryContext());
             return await List(result);
         }
 
         [HttpGet("{id}")]
         public virtual async Task<ActionResult<TRestModel>> Get(TEntityPk id)
         {
-            return await MapRestModel(await GetRepository().GetById(id));
+            return await MapRestModel(await Repository.GetById(id));
         }
 
         [HttpGet("new")]
         public virtual async Task<ActionResult<TRestModel>> New()
         {
-            return await MapRestModel(await GetRepository().New());
+            return await MapRestModel(await Repository.New());
         }
 
         [HttpPost("publish/{id}")]
         public virtual async Task<ActionResult<TRestModel>> Publish(TEntityPk id)
         {
-            var entity = await GetRepository().GetById(id);
+            var entity = await Repository.GetById(id);
             if (entity != null)
             {
                 if (entity.IsPublished)
@@ -74,7 +71,7 @@ namespace BioEngine.Core.API
                     return BadRequest();
                 }
 
-                await GetRepository().Publish(entity);
+                await Repository.Publish(entity);
                 return await MapRestModel(entity);
             }
 
@@ -84,7 +81,7 @@ namespace BioEngine.Core.API
         [HttpPost("hide/{id}")]
         public virtual async Task<ActionResult<TRestModel>> Hide(TEntityPk id)
         {
-            var entity = await GetRepository().GetById(id);
+            var entity = await Repository.GetById(id);
             if (entity != null)
             {
                 if (!entity.IsPublished)
@@ -92,7 +89,7 @@ namespace BioEngine.Core.API
                     return BadRequest();
                 }
 
-                await GetRepository().UnPublish(entity);
+                await Repository.UnPublish(entity);
                 return await MapRestModel(entity);
             }
 
@@ -104,7 +101,7 @@ namespace BioEngine.Core.API
         {
             var entity = await MapDomainModel(item, Activator.CreateInstance<TEntity>());
 
-            var result = await GetRepository().Add(entity);
+            var result = await Repository.Add(entity);
             if (result.IsSuccess)
             {
                 await AfterSave(item, result.Entity);
@@ -119,7 +116,7 @@ namespace BioEngine.Core.API
         public virtual async Task<ActionResult<TRestModel>> Update(TEntityPk id,
             TRestModel item)
         {
-            var entity = await GetRepository().GetById(id);
+            var entity = await Repository.GetById(id);
             if (entity == null)
             {
                 return NotFound();
@@ -127,7 +124,7 @@ namespace BioEngine.Core.API
 
             entity = await MapDomainModel(item, entity);
 
-            var result = await GetRepository().Update(entity);
+            var result = await Repository.Update(entity);
             if (result.IsSuccess)
             {
                 await AfterSave(item, result.Entity);
@@ -149,7 +146,7 @@ namespace BioEngine.Core.API
         [HttpDelete("{id}")]
         public virtual async Task<ActionResult<TRestModel>> Delete(TEntityPk id)
         {
-            var result = await GetRepository().Delete(id);
+            var result = await Repository.Delete(id);
             if (result) return Deleted();
             return BadRequest();
         }
@@ -175,8 +172,6 @@ namespace BioEngine.Core.API
             return context;
         }
 
-
-        protected abstract BioRepository<TEntity, TEntityPk> GetRepository();
 
         protected new ActionResult<TRestModel> NotFound()
         {
@@ -231,14 +226,17 @@ namespace BioEngine.Core.API
             return Ok(model);
         }
 
-        protected RestController(BaseControllerContext context) : base(context)
+        protected RestController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
         {
+            Repository = context.Repository;
         }
+
+        protected IBioRepository<TEntity, TEntityPk> Repository { get; }
 
         [HttpGet("count")]
         public virtual async Task<ActionResult<int>> Count()
         {
-            var result = await GetRepository().Count(GetQueryContext());
+            var result = await Repository.Count(GetQueryContext());
             return Ok(result);
         }
 

@@ -4,6 +4,7 @@ using BioEngine.Core.API.Request;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
 using BioEngine.Core.Storage;
+using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Core.API
@@ -13,7 +14,7 @@ namespace BioEngine.Core.API
         where T : Section<TData>, IEntity<TId>
         where TData : TypedData, new()
     {
-        protected SectionController(BaseControllerContext context) : base(context)
+        protected SectionController(BaseControllerContext<T, TId> context) : base(context)
         {
         }
 
@@ -36,7 +37,7 @@ namespace BioEngine.Core.API
         where T : Section, IEntity<TId>
         where TRestModel : SectionRestModel<TId>
     {
-        protected SectionController(BaseControllerContext context) : base(context)
+        protected SectionController(BaseControllerContext<T, TId> context) : base(context)
         {
         }
 

@@ -2,13 +2,14 @@
 using BioEngine.Core.API.Request;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
+using BioEngine.Core.Web;
 
 namespace BioEngine.Core.API
 {
     public abstract class ContentController<TRestModel, T, TId> : RestController<TRestModel, T, TId>
         where T : ContentItem, IEntity<TId> where TRestModel : ContentEntityRestModel<TId>
     {
-        protected ContentController(BaseControllerContext context) : base(context)
+        protected ContentController(BaseControllerContext<T, TId> context) : base(context)
         {
         }
 
@@ -25,6 +26,7 @@ namespace BioEngine.Core.API
             {
                 restModel.TypeTitle = typedEntity.TypeTitle;
             }
+
             return restModel;
         }
 
@@ -51,7 +53,7 @@ namespace BioEngine.Core.API
         where T : ContentItem<TData>, IEntity<TId>
         where TData : TypedData, new()
     {
-        protected ContentController(BaseControllerContext context) : base(context)
+        protected ContentController(BaseControllerContext<T, TId> context) : base(context)
         {
         }
 
