@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BioEngine.Core.Providers;
+using BioEngine.Core.Settings;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Settings
+    [PublicAPI]
+    public class SettingsGroup
     {
         public string Name { get; }
         public string Key { get; }
         public bool IsEditable { get; }
-        public SettingMode Mode { get; }
+        public SettingsMode Mode { get; }
         public List<SettingsProperty> Properties { get; } = new List<SettingsProperty>();
 
         [JsonConstructor]
-        private Settings(string name, string key, bool isEditable, SettingMode mode)
+        private SettingsGroup(string name, string key, bool isEditable, SettingsMode mode)
         {
             Name = name;
             Key = key;
@@ -24,9 +25,9 @@ namespace BioEngine.Core.API.Entities
             Mode = mode;
         }
 
-        public static Settings Create(SettingsEntry settingsEntry)
+        public static SettingsGroup Create(SettingsEntry settingsEntry)
         {
-            var restModel = new Settings(settingsEntry.Schema.Name, settingsEntry.Schema.Key.Replace(".", "-"),
+            var restModel = new SettingsGroup(settingsEntry.Schema.Name, settingsEntry.Schema.Key.Replace(".", "-"),
                 settingsEntry.Schema.IsEditable, settingsEntry.Schema.Mode);
 
             foreach (var propertyInfo in settingsEntry.Schema.Properties)
@@ -50,10 +51,6 @@ namespace BioEngine.Core.API.Entities
         {
             var key = Key.Replace("-", ".");
             var settings = SettingsProvider.GetInstance(key);
-            if (settings == null)
-            {
-                throw new ArgumentException($"Class {Key} is not registered in settings provider");
-            }
 
             var entry = new SettingsEntry(key, SettingsProvider.GetSchema(settings.GetType()));
             var settingsValues = new List<SettingsValue>();

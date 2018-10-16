@@ -30,7 +30,8 @@ namespace BioEngine.Core.API
             restModel.DateUpdated = domainModel.DateUpdated;
             restModel.IsPublished = domainModel.IsPublished;
             restModel.DatePublished = domainModel.DatePublished;
-            restModel.SettingsGroups = domainModel.Settings.Select(Settings.Create).ToList();
+            restModel.SettingsGroups =
+                domainModel.Settings.Select(SettingsGroup.Create).ToList();
             return Task.FromResult(restModel);
         }
 

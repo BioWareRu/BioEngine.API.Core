@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using BioEngine.Core.API.Entities;
 using BioEngine.Core.Interfaces;
-using BioEngine.Core.Providers;
+using BioEngine.Core.Settings;
 using BioEngine.Core.Storage;
 using Newtonsoft.Json;
 
@@ -19,7 +19,7 @@ namespace BioEngine.Core.API.Request
         public DateTimeOffset? DatePublished { get; set; }
 
         [JsonIgnore] public List<SettingsEntry> Settings { get; set; }
-        public List<Settings> SettingsGroups { get; set; }
+        public List<SettingsGroup> SettingsGroups { get; set; }
     }
 
     public abstract class SiteEntityRestModel<TPk> : RestModel<TPk>, ISiteEntity<TPk>
@@ -45,7 +45,8 @@ namespace BioEngine.Core.API.Request
         public virtual string Hashtag { get; set; }
     }
 
-    public abstract class SectionRestModel<TPk, TData> : SectionRestModel<TPk>, ITypedEntity<TData> where TData : TypedData, new()
+    public abstract class SectionRestModel<TPk, TData> : SectionRestModel<TPk>, ITypedEntity<TData>
+        where TData : TypedData, new()
     {
         public TData Data { get; set; }
     }
@@ -60,7 +61,8 @@ namespace BioEngine.Core.API.Request
         public bool IsPinned { get; set; }
     }
 
-    public abstract class ContentEntityRestModel<TPk, TData> : ContentEntityRestModel<TPk> where TData : TypedData, new()
+    public abstract class ContentEntityRestModel<TPk, TData> : ContentEntityRestModel<TPk>
+        where TData : TypedData, new()
     {
         public TData Data { get; set; }
     }
