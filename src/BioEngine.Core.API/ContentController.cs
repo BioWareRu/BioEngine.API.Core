@@ -19,7 +19,6 @@ namespace BioEngine.Core.API
             restModel.Type = domainModel.Type;
             restModel.Title = domainModel.Title;
             restModel.Url = domainModel.Url;
-            restModel.Description = domainModel.Description;
             restModel.SectionIds = domainModel.SectionIds;
             restModel.TagIds = domainModel.TagIds;
             if (domainModel is ITypedEntity typedEntity)
@@ -41,7 +40,6 @@ namespace BioEngine.Core.API
 
             domainModel.Title = restModel.Title;
             domainModel.Url = restModel.Url;
-            domainModel.Description = restModel.Description;
             domainModel.SectionIds = restModel.SectionIds;
             domainModel.TagIds = restModel.TagIds;
             return domainModel;

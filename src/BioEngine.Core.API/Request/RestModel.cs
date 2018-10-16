@@ -57,7 +57,6 @@ namespace BioEngine.Core.API.Request
         public string Title { get; set; }
         public string TypeTitle { get; set; }
         public string Url { get; set; }
-        public string Description { get; set; }
         public bool IsPinned { get; set; }
     }
 
