@@ -35,7 +35,7 @@ namespace BioEngine.Core.API.Request
 
     public abstract class SectionRestModel<TPk> : SiteEntityRestModel<TPk>
     {
-        public virtual int Type { get; set; }
+        public virtual string Type { get; set; }
         public string TypeTitle { get; set; }
         public virtual string Title { get; set; }
         public virtual string Url { get; set; }
@@ -52,7 +52,7 @@ namespace BioEngine.Core.API.Request
 
     public abstract class ContentEntityRestModel<TPk> : SectionEntityRestModel<TPk>, IContentEntity<TPk>
     {
-        public int Type { get; set; }
+        public string Type { get; set; }
         public int AuthorId { get; set; }
         public string Title { get; set; }
         public string TypeTitle { get; set; }
