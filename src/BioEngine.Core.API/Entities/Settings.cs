@@ -85,6 +85,7 @@ namespace BioEngine.Core.API.Entities
 
         private static object ParsePropertyValue(Type propertyType, object value)
         {
+            if (value == null) return null;
             object parsedValue = null;
             if (propertyType.IsEnum)
             {
