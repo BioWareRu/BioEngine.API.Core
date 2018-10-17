@@ -18,16 +18,16 @@ namespace BioEngine.Core.API
         {
         }
 
-        protected override async Task<TRestModel> MapRestModel(T domainModel)
+        protected override async Task<TRestModel> MapRestModelAsync(T domainModel)
         {
-            var restModel = await base.MapRestModel(domainModel);
+            var restModel = await base.MapRestModelAsync(domainModel);
             restModel.Data = domainModel.Data;
             return restModel;
         }
 
-        protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
+        protected override async Task<T> MapDomainModelAsync(TRestModel restModel, T domainModel = default(T))
         {
-            domainModel = await base.MapDomainModel(restModel, domainModel);
+            domainModel = await base.MapDomainModelAsync(restModel, domainModel);
             domainModel.Data = restModel.Data;
             return domainModel;
         }
@@ -41,21 +41,21 @@ namespace BioEngine.Core.API
         {
         }
 
-        public override async Task<ActionResult<StorageItem>> Upload([FromQuery] string name)
+        public override async Task<ActionResult<StorageItem>> UploadAsync([FromQuery] string name)
         {
             using (var ms = new MemoryStream())
             {
                 await Request.Body.CopyToAsync(ms);
-                return await Storage.SaveFile(ms.GetBuffer(), name,
+                return await Storage.SaveFileAsync(ms.GetBuffer(), name,
                     $"sections/{GetUploadPath()}");
             }
         }
 
         protected abstract string GetUploadPath();
 
-        protected override async Task<TRestModel> MapRestModel(T domainModel)
+        protected override async Task<TRestModel> MapRestModelAsync(T domainModel)
         {
-            var restModel = await base.MapRestModel(domainModel);
+            var restModel = await base.MapRestModelAsync(domainModel);
             restModel.Title = domainModel.Title;
             restModel.Type = domainModel.Type;
             restModel.Url = domainModel.Url;
@@ -73,9 +73,9 @@ namespace BioEngine.Core.API
         }
 
         // ReSharper disable once OptionalParameterHierarchyMismatch
-        protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
+        protected override async Task<T> MapDomainModelAsync(TRestModel restModel, T domainModel = default(T))
         {
-            domainModel = await base.MapDomainModel(restModel, domainModel);
+            domainModel = await base.MapDomainModelAsync(restModel, domainModel);
             domainModel.Title = restModel.Title;
             domainModel.Url = restModel.Url;
             domainModel.Logo = restModel.Logo;

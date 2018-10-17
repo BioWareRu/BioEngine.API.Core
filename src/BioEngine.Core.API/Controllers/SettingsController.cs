@@ -21,7 +21,7 @@ namespace BioEngine.Core.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ListResponse<SettingsOption>>> Get(
+        public async Task<ActionResult<ListResponse<SettingsOption>>> GetAsync(
             string settingsKey, string propertyKey)
         {
             var settings = SettingsProvider.GetInstance(settingsKey.Replace("-", "."));
@@ -36,7 +36,7 @@ namespace BioEngine.Core.API.Controllers
                 return NotFound();
             }
 
-            var options = await resolver.Resolve(settings, propertyKey.Replace("-", "."));
+            var options = await resolver.ResolveAsync(settings, propertyKey.Replace("-", "."));
 
             return new ListResponse<SettingsOption>(options, options.Count);
         }

@@ -13,9 +13,9 @@ namespace BioEngine.Core.API
         {
         }
 
-        protected override async Task<TRestModel> MapRestModel(T domainModel)
+        protected override async Task<TRestModel> MapRestModelAsync(T domainModel)
         {
-            var restModel = await base.MapRestModel(domainModel);
+            var restModel = await base.MapRestModelAsync(domainModel);
             restModel.Type = domainModel.Type;
             restModel.Title = domainModel.Title;
             restModel.Url = domainModel.Url;
@@ -31,9 +31,9 @@ namespace BioEngine.Core.API
         }
 
         // ReSharper disable once OptionalParameterHierarchyMismatch
-        protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
+        protected override async Task<T> MapDomainModelAsync(TRestModel restModel, T domainModel = default(T))
         {
-            domainModel = await base.MapDomainModel(restModel, domainModel);
+            domainModel = await base.MapDomainModelAsync(restModel, domainModel);
             if (domainModel.AuthorId == 0)
             {
                 domainModel.AuthorId = CurrentUser.Id;
@@ -56,16 +56,16 @@ namespace BioEngine.Core.API
         {
         }
 
-        protected override async Task<TRestModel> MapRestModel(T domainModel)
+        protected override async Task<TRestModel> MapRestModelAsync(T domainModel)
         {
-            var restModel = await base.MapRestModel(domainModel);
+            var restModel = await base.MapRestModelAsync(domainModel);
             restModel.Data = domainModel.Data;
             return restModel;
         }
 
-        protected override async Task<T> MapDomainModel(TRestModel restModel, T domainModel = default(T))
+        protected override async Task<T> MapDomainModelAsync(TRestModel restModel, T domainModel = default(T))
         {
-            domainModel = await base.MapDomainModel(restModel, domainModel);
+            domainModel = await base.MapDomainModelAsync(restModel, domainModel);
             domainModel.Data = restModel.Data;
             return domainModel;
         }
