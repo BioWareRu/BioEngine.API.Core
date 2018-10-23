@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using BioEngine.Core.API.Entities;
 using BioEngine.Core.API.Interfaces;
 using BioEngine.Core.API.Request;
@@ -13,6 +15,7 @@ using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BioEngine.Core.API
 {
@@ -155,19 +158,39 @@ namespace BioEngine.Core.API
         protected QueryContext<TEntity, TEntityPk> GetQueryContext()
         {
             var context = new QueryContext<TEntity, TEntityPk> {IncludeUnpublished = true};
-            if (ControllerContext.HttpContext.Request.Query.ContainsKey("limit"))
+            if (Request.Query.ContainsKey("limit"))
             {
                 context.Limit = int.Parse(ControllerContext.HttpContext.Request.Query["limit"]);
             }
 
-            if (ControllerContext.HttpContext.Request.Query.ContainsKey("offset"))
+            if (Request.Query.ContainsKey("offset"))
             {
                 context.Offset = int.Parse(ControllerContext.HttpContext.Request.Query["offset"]);
             }
 
-            if (ControllerContext.HttpContext.Request.Query.ContainsKey("order"))
+            if (Request.Query.ContainsKey("order"))
             {
                 context.SetOrderByString(ControllerContext.HttpContext.Request.Query["order"]);
+            }
+
+            if (HttpContext.Request.Query.ContainsKey("filter") &&
+                !string.IsNullOrEmpty(ControllerContext.HttpContext.Request.Query["filter"]) &&
+                ControllerContext.HttpContext.Request.Query["filter"] != "null")
+            {
+                var str = ControllerContext.HttpContext.Request.Query["filter"].ToString();
+                var mod4 = str.Length % 4;
+                if (mod4 > 0)
+                {
+                    str += new string('=', 4 - mod4);
+                }
+
+                var data = Convert.FromBase64String(str);
+                var decodedString = HttpUtility.UrlDecode(Encoding.UTF8.GetString(data));
+                var where = JsonConvert.DeserializeObject<List<QueryContextConditionsGroup>>(decodedString);
+                if (where != null)
+                {
+                    context.SetWhere(where);
+                }
             }
 
             return context;
