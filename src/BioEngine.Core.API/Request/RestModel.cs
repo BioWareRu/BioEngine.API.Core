@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using BioEngine.Core.API.Entities;
 using BioEngine.Core.Interfaces;
-using BioEngine.Core.Settings;
+using BioEngine.Core.Properties;
 using BioEngine.Core.Storage;
 using BioEngine.Core.Users;
 using Newtonsoft.Json;
@@ -19,8 +19,8 @@ namespace BioEngine.Core.API.Request
         public bool IsPublished { get; set; }
         public DateTimeOffset? DatePublished { get; set; }
 
-        [JsonIgnore] public List<SettingsEntry> Settings { get; set; }
-        public List<SettingsGroup> SettingsGroups { get; set; }
+        [JsonIgnore] public List<PropertiesEntry> Properties { get; set; }
+        public List<PropertiesGroup> PropertiesGroups { get; set; }
     }
 
     public abstract class SiteEntityRestModel<TPk> : RestModel<TPk>, ISiteEntity<TPk>

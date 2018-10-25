@@ -33,15 +33,15 @@ namespace BioEngine.Core.API
             restModel.DateUpdated = domainModel.DateUpdated;
             restModel.IsPublished = domainModel.IsPublished;
             restModel.DatePublished = domainModel.DatePublished;
-            restModel.SettingsGroups =
-                domainModel.Settings.Select(SettingsGroup.Create).ToList();
+            restModel.PropertiesGroups =
+                domainModel.Properties.Select(PropertiesGroup.Create).ToList();
             return Task.FromResult(restModel);
         }
 
         protected virtual Task<TEntity> MapDomainModelAsync(TRestModel restModel, TEntity domainModel = null)
         {
             domainModel = domainModel ?? Activator.CreateInstance<TEntity>();
-            domainModel.Settings = restModel.SettingsGroups?.Select(s => s.GetSettings()).ToList();
+            domainModel.Properties = restModel.PropertiesGroups?.Select(s => s.GetPropertiesEntry()).ToList();
             return Task.FromResult(domainModel);
         }
 
