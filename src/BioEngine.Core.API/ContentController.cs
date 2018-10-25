@@ -22,6 +22,7 @@ namespace BioEngine.Core.API
             restModel.SectionIds = domainModel.SectionIds;
             restModel.SiteIds = domainModel.SiteIds;
             restModel.TagIds = domainModel.TagIds;
+            restModel.Author = domainModel.Author;
             if (domainModel is ITypedEntity typedEntity)
             {
                 restModel.TypeTitle = typedEntity.TypeTitle;

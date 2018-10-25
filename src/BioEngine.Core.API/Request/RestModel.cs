@@ -4,6 +4,7 @@ using BioEngine.Core.API.Entities;
 using BioEngine.Core.Interfaces;
 using BioEngine.Core.Settings;
 using BioEngine.Core.Storage;
+using BioEngine.Core.Users;
 using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Request
@@ -59,6 +60,7 @@ namespace BioEngine.Core.API.Request
         public string TypeTitle { get; set; }
         public string Url { get; set; }
         public bool IsPinned { get; set; }
+        public UserData Author { get; set; }
     }
 
     public abstract class ContentEntityRestModel<TPk, TData> : ContentEntityRestModel<TPk>
