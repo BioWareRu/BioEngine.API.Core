@@ -1,8 +1,8 @@
-﻿using BioEngine.Core.API.Request;
+﻿using BioEngine.Core.API.Models;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Section : SectionRestModel<int>
+    public class Section : ResponseSectionRestModel<Core.Entities.Section, int>
     {
     }
 }

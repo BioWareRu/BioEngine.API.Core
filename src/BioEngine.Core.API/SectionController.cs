@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using BioEngine.Core.API.Request;
+using BioEngine.Core.API.Models;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
 using BioEngine.Core.Storage;
@@ -9,35 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Core.API
 {
-    public abstract class SectionController<TRestModel, T, TId, TData> : SectionController<TRestModel, T, TId>
-        where TRestModel : SectionRestModel<TId, TData>
-        where T : Section<TData>, IEntity<TId>
+    public abstract class
+        SectionController<TEntity, TEntityPk, TData, TResponse, TRequest> : RequestRestController<TEntity, TEntityPk, TResponse
+            , TRequest>
+        where TEntity : Section<TData>, IEntity<TEntityPk>
         where TData : TypedData, new()
+        where TResponse : class, IResponseRestModel<TEntity, TEntityPk>
+        where TRequest : class, IRequestRestModel<TEntity, TEntityPk>
     {
-        protected SectionController(BaseControllerContext<T, TId> context) : base(context)
-        {
-        }
-
-        protected override async Task<TRestModel> MapRestModelAsync(T domainModel)
-        {
-            var restModel = await base.MapRestModelAsync(domainModel);
-            restModel.Data = domainModel.Data;
-            return restModel;
-        }
-
-        protected override async Task<T> MapDomainModelAsync(TRestModel restModel, T domainModel = default(T))
-        {
-            domainModel = await base.MapDomainModelAsync(restModel, domainModel);
-            domainModel.Data = restModel.Data;
-            return domainModel;
-        }
-    }
-
-    public abstract class SectionController<TRestModel, T, TId> : RestController<TRestModel, T, TId>
-        where T : Section, IEntity<TId>
-        where TRestModel : SectionRestModel<TId>
-    {
-        protected SectionController(BaseControllerContext<T, TId> context) : base(context)
+        protected SectionController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
         {
         }
 
@@ -52,38 +32,14 @@ namespace BioEngine.Core.API
         }
 
         protected abstract string GetUploadPath();
+    }
 
-        protected override async Task<TRestModel> MapRestModelAsync(T domainModel)
+    public abstract class
+        SectionController<TEntity, TEntityPk, TResponse> : ResponseRestController<TEntity, TEntityPk, TResponse>
+        where TEntity : Section, IEntity<TEntityPk> where TResponse : IResponseRestModel<TEntity, TEntityPk>
+    {
+        protected SectionController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
         {
-            var restModel = await base.MapRestModelAsync(domainModel);
-            restModel.Title = domainModel.Title;
-            restModel.Type = domainModel.Type;
-            restModel.Url = domainModel.Url;
-            restModel.Logo = domainModel.Logo;
-            restModel.LogoSmall = domainModel.LogoSmall;
-            restModel.ShortDescription = domainModel.ShortDescription;
-            restModel.Hashtag = domainModel.Hashtag;
-            restModel.SiteIds = domainModel.SiteIds;
-            if (domainModel is ITypedEntity typedEntity)
-            {
-                restModel.TypeTitle = typedEntity.TypeTitle;
-            }
-
-            return restModel;
-        }
-
-        // ReSharper disable once OptionalParameterHierarchyMismatch
-        protected override async Task<T> MapDomainModelAsync(TRestModel restModel, T domainModel = default(T))
-        {
-            domainModel = await base.MapDomainModelAsync(restModel, domainModel);
-            domainModel.Title = restModel.Title;
-            domainModel.Url = restModel.Url;
-            domainModel.Logo = restModel.Logo;
-            domainModel.LogoSmall = restModel.LogoSmall;
-            domainModel.ShortDescription = restModel.ShortDescription;
-            domainModel.Hashtag = restModel.Hashtag;
-            domainModel.SiteIds = restModel.SiteIds;
-            return domainModel;
         }
     }
 }

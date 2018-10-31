@@ -1,10 +1,8 @@
-﻿using BioEngine.Core.API.Request;
+﻿using BioEngine.Core.API.Models;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class ContentEntityItem : ContentEntityRestModel<int>
+    public class ContentItem : ResponseContentEntityRestModel<Core.Entities.ContentItem, int>
     {
     }
-
-    
 }
