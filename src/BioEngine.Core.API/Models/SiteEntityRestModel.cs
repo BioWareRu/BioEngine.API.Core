@@ -21,4 +21,23 @@ namespace BioEngine.Core.API.Models
             return entity;
         }
     }
+
+    public abstract class SingleSiteEntityRestModel<TEntity, TEntityPk> : RestModel<TEntity, TEntityPk>
+        where TEntity : class, ISingleSiteEntity<TEntityPk>, IEntity<TEntityPk>
+    {
+        public int SiteId { get; set; }
+
+        protected override async Task ParseEntityAsync(TEntity entity)
+        {
+            await base.ParseEntityAsync(entity);
+            SiteId = entity.SiteId;
+        }
+
+        protected override async Task<TEntity> FillEntityAsync(TEntity entity)
+        {
+            entity = await base.FillEntityAsync(entity);
+            entity.SiteId = SiteId;
+            return entity;
+        }
+    }
 }
