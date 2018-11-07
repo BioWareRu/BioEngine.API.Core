@@ -5,7 +5,7 @@ using BioEngine.Core.Entities;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Menu : SiteEntityRestModel<Core.Entities.Menu, int>, IRequestRestModel<Core.Entities.Menu, int>,
+    public class Menu : SingleSiteEntityRestModel<Core.Entities.Menu, int>, IRequestRestModel<Core.Entities.Menu, int>,
         IResponseRestModel<Core.Entities.Menu, int>
     {
         public string Title { get; set; }
