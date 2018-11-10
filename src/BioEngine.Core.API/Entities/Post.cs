@@ -6,13 +6,29 @@ using BioEngine.Core.Interfaces;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Post : SectionEntityRestModel<Core.Entities.Post, int>,
-        IResponseRestModel<Core.Entities.Post, int>,
+    public class PostRequestItem : SectionEntityRestModel<Core.Entities.Post, int>,
         IRequestRestModel<Core.Entities.Post, int>
     {
         public string Title { get; set; }
         public string Url { get; set; }
         public List<ContentBlock> Blocks { get; set; }
+
+        public async Task<Core.Entities.Post> GetEntityAsync(Core.Entities.Post entity)
+        {
+            return await FillEntityAsync(entity);
+        }
+
+        protected override async Task<Core.Entities.Post> FillEntityAsync(Core.Entities.Post entity)
+        {
+            entity = await base.FillEntityAsync(entity);
+            entity.Title = Title;
+            entity.Url = Url;
+            return entity;
+        }
+    }
+
+    public class Post : PostRequestItem, IResponseRestModel<Core.Entities.Post, int>
+    {
         public IUser Author { get; set; }
         public int AuthorId { get; set; }
         public bool IsPinned { get; set; }
@@ -30,22 +46,10 @@ namespace BioEngine.Core.API.Entities
             IsPinned = entity.IsPinned;
         }
 
-        protected override async Task<Core.Entities.Post> FillEntityAsync(Core.Entities.Post entity)
-        {
-            entity = await base.FillEntityAsync(entity);
-            entity.Title = Title;
-            entity.Url = Url;
-            return entity;
-        }
 
         public async Task SetEntityAsync(Core.Entities.Post entity)
         {
             await ParseEntityAsync(entity);
-        }
-
-        public async Task<Core.Entities.Post> GetEntityAsync(Core.Entities.Post entity)
-        {
-            return await FillEntityAsync(entity);
         }
     }
 
@@ -54,6 +58,7 @@ namespace BioEngine.Core.API.Entities
         public int Id { get; set; }
         public string Type { get; set; }
         public string TypeTitle { get; set; }
+        public int Position { get; set; }
         public object Data { get; set; }
 
         public static ContentBlock Create(Core.Entities.PostBlock block)
@@ -63,6 +68,7 @@ namespace BioEngine.Core.API.Entities
                 Id = block.Id,
                 Type = block.Type,
                 TypeTitle = block.TypeTitle,
+                Position = block.Position,
                 Data = block.GetData()
             };
 
