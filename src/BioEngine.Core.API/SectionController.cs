@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace BioEngine.Core.API
 {
     public abstract class
-        SectionController<TEntity, TEntityPk, TData, TResponse, TRequest> : RequestRestController<TEntity, TEntityPk, TResponse
+        SectionController<TEntity, TEntityPk, TData, TResponse, TRequest> : RequestRestController<TEntity, TEntityPk,
+            TResponse
             , TRequest>
         where TEntity : Section<TData>, IEntity<TEntityPk>
         where TData : TypedData, new()
@@ -23,12 +24,8 @@ namespace BioEngine.Core.API
 
         public override async Task<ActionResult<StorageItem>> UploadAsync([FromQuery] string name)
         {
-            using (var ms = new MemoryStream())
-            {
-                await Request.Body.CopyToAsync(ms);
-                return await Storage.SaveFileAsync(ms.GetBuffer(), name,
-                    $"sections/{GetUploadPath()}");
-            }
+            var file = await GetBodyAsFileAsync();
+            return await Storage.SaveFileAsync(file, name, $"sections/{GetUploadPath()}");
         }
 
         protected abstract string GetUploadPath();

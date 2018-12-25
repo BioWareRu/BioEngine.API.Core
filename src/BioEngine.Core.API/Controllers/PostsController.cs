@@ -76,12 +76,9 @@ namespace BioEngine.Core.API.Controllers
 
         public override async Task<ActionResult<StorageItem>> UploadAsync(string name)
         {
-            using (var ms = new MemoryStream())
-            {
-                await Request.Body.CopyToAsync(ms);
-                return await Storage.SaveFileAsync(ms.GetBuffer(), name,
-                    $"posts/{DateTimeOffset.UtcNow.Year}/{DateTimeOffset.UtcNow.Month}");
-            }
+            var file = await GetBodyAsFileAsync();
+            return await Storage.SaveFileAsync(file, name,
+                $"posts/{DateTimeOffset.UtcNow.Year}/{DateTimeOffset.UtcNow.Month}");
         }
     }
 }

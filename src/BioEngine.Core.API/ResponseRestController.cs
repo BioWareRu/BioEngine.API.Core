@@ -9,7 +9,6 @@ using BioEngine.Core.API.Response;
 using BioEngine.Core.DB;
 using BioEngine.Core.Interfaces;
 using BioEngine.Core.Web;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,10 +16,7 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Core.API
 {
-    [ApiController]
-    [Authorize]
-    [Route("v1/[controller]")]
-    public abstract class ResponseRestController<TEntity, TEntityPk, TResponse> : BaseController
+    public abstract class ResponseRestController<TEntity, TEntityPk, TResponse> : ApiController
         where TResponse : IResponseRestModel<TEntity, TEntityPk> where TEntity : class, IEntity<TEntityPk>
     {
         protected IBioRepository<TEntity, TEntityPk> Repository { get; }
