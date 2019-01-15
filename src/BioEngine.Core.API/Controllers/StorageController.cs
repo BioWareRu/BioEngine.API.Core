@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BioEngine.Core.Storage;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace BioEngine.Core.API.Controllers
 {
@@ -14,38 +12,19 @@ namespace BioEngine.Core.API.Controllers
         {
         }
 
-        [HttpGet("directories")]
-        public async Task<IEnumerable<string>> ListDirectoriesAsync(string path)
+        [HttpGet]
+        public Task<IEnumerable<StorageNode>> ListAsync(string path = "/")
         {
-            return await Storage.ListDirectoriesAsync(path);
+            return Storage.ListItemsAsync(path, "storage");
         }
 
-        [HttpGet("items")]
-        public async Task<IEnumerable<StorageItem>> ListItemsAsync(string path)
-        {
-            return await Storage.ListItemsAsync(path);
-        }
-
-        [HttpPost("items")]
-        public async Task<ActionResult<StorageItem>> UploadAsync([FromQuery] string name, [FromQuery] string path)
+        [HttpPost("upload")]
+        public async Task<StorageNode> UploadAsync([FromQuery] string name, [FromQuery] string path = "/")
         {
             var file = await GetBodyAsFileAsync();
-            return await Storage.SaveFileAsync(file, name, $"{path}");
-        }
 
-        [HttpPost("directories")]
-        public async Task<bool> CreateDirectoryAsync([FromQuery] string path)
-        {
-            try
-            {
-                await Storage.CreateDirectoryAsync(path);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, ex.ToString());
-                return false;
-            }
+            var item = await Storage.SaveFileAsync(file, name, path, "storage");
+            return new StorageNode(item);
         }
     }
 }

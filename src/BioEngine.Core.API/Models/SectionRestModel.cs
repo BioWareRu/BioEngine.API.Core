@@ -13,6 +13,8 @@ namespace BioEngine.Core.API.Models
         public virtual string Url { get; set; }
         public virtual StorageItem Logo { get; set; }
         public virtual StorageItem LogoSmall { get; set; }
+        public int LogoId { get; set; }
+        public int LogoSmallId { get; set; }
         public virtual string ShortDescription { get; set; }
         public virtual string Hashtag { get; set; }
 
@@ -26,8 +28,8 @@ namespace BioEngine.Core.API.Models
             entity = await base.FillEntityAsync(entity);
             entity.Title = Title;
             entity.Url = Url;
-            entity.Logo = Logo;
-            entity.LogoSmall = LogoSmall;
+            entity.LogoId = LogoId;
+            entity.LogoSmallId = LogoSmallId;
             entity.ShortDescription = ShortDescription;
             entity.Hashtag = Hashtag;
             return entity;
@@ -67,7 +69,9 @@ namespace BioEngine.Core.API.Models
             Title = entity.Title;
             Url = entity.Url;
             Logo = entity.Logo;
+            LogoId = entity.LogoId;
             LogoSmall = entity.LogoSmall;
+            LogoSmallId = entity.LogoSmallId;
             ShortDescription = entity.ShortDescription;
             Hashtag = entity.Hashtag;
             if (entity is ITypedEntity typedEntity)
@@ -99,6 +103,8 @@ namespace BioEngine.Core.API.Models
             Url = entity.Url;
             Logo = entity.Logo;
             LogoSmall = entity.LogoSmall;
+            LogoId = entity.LogoId;
+            LogoSmallId = entity.LogoSmallId;
             ShortDescription = entity.ShortDescription;
             Hashtag = entity.Hashtag;
             TypeTitle = entity.TypeTitle;
