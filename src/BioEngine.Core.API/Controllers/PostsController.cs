@@ -50,13 +50,9 @@ namespace BioEngine.Core.API.Controllers
             domainModel.Blocks = new List<PostBlock>();
             foreach (var contentBlock in restModel.Blocks)
             {
-                PostBlock block;
-                if (contentBlock.Id > 0)
-                {
-                    block = await _dbContext.Blocks.FirstOrDefaultAsync(b =>
-                        b.Id == contentBlock.Id && b.Post == domainModel);
-                }
-                else
+                var block = await _dbContext.Blocks.FirstOrDefaultAsync(b =>
+                    b.Id == contentBlock.Id && b.Post == domainModel);
+                if (block == null)
                 {
                     block = CreateBlock(contentBlock.Type);
                 }
