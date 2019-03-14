@@ -16,12 +16,12 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Core.API
 {
-    public abstract class ResponseRestController<TEntity, TEntityPk, TResponse> : ApiController
-        where TResponse : IResponseRestModel<TEntity, TEntityPk> where TEntity : class, IEntity<TEntityPk>
+    public abstract class ResponseRestController<TEntity, TResponse> : ApiController
+        where TResponse : IResponseRestModel<TEntity> where TEntity : class, IEntity
     {
-        protected IBioRepository<TEntity, TEntityPk> Repository { get; }
+        protected IBioRepository<TEntity> Repository { get; }
 
-        protected ResponseRestController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
+        protected ResponseRestController(BaseControllerContext<TEntity> context) : base(context)
         {
             Repository = context.Repository;
         }
@@ -41,7 +41,7 @@ namespace BioEngine.Core.API
         }
 
         [HttpGet("{id}")]
-        public virtual async Task<ActionResult<TResponse>> GetAsync(TEntityPk id)
+        public virtual async Task<ActionResult<TResponse>> GetAsync(Guid id)
         {
             var entity = await Repository.GetByIdAsync(id);
             if (entity == null)
@@ -66,9 +66,9 @@ namespace BioEngine.Core.API
             return Ok(result);
         }
 
-        protected QueryContext<TEntity, TEntityPk> GetQueryContext()
+        protected QueryContext<TEntity> GetQueryContext()
         {
-            var context = new QueryContext<TEntity, TEntityPk> {IncludeUnpublished = true};
+            var context = new QueryContext<TEntity> {IncludeUnpublished = true};
             if (Request.Query.ContainsKey("limit"))
             {
                 context.Limit = int.Parse(ControllerContext.HttpContext.Request.Query["limit"]);

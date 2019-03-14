@@ -5,7 +5,6 @@ using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
-using BioEngine.Core.Storage;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,13 +12,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace BioEngine.Core.API
 {
     public abstract class
-        RequestRestController<TEntity, TEntityPk, TResponse, TRequest> : ResponseRestController<TEntity, TEntityPk,
+        RequestRestController<TEntity, TResponse, TRequest> : ResponseRestController<TEntity,
             TResponse>
-        where TEntity : class, IEntity<TEntityPk>
-        where TResponse : class, IResponseRestModel<TEntity, TEntityPk>
-        where TRequest : class, IRequestRestModel<TEntity, TEntityPk>
+        where TEntity : class, IEntity
+        where TResponse : class, IResponseRestModel<TEntity>
+        where TRequest : class, IRequestRestModel<TEntity>
     {
-        protected RequestRestController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
+        protected RequestRestController(BaseControllerContext<TEntity> context) : base(context)
         {
         }
 
@@ -47,7 +46,7 @@ namespace BioEngine.Core.API
         }
 
         [HttpPut("{id}")]
-        public virtual async Task<ActionResult<TResponse>> UpdateAsync(TEntityPk id, TRequest item)
+        public virtual async Task<ActionResult<TResponse>> UpdateAsync(Guid id, TRequest item)
         {
             var entity = await Repository.GetByIdAsync(id);
             if (entity == null)
@@ -77,7 +76,7 @@ namespace BioEngine.Core.API
         //protected abstract TRest MapEntity(TRest entity, TRest newData);
 
         [HttpDelete("{id}")]
-        public virtual async Task<ActionResult<TResponse>> DeleteAsync(TEntityPk id)
+        public virtual async Task<ActionResult<TResponse>> DeleteAsync(Guid id)
         {
             var result = await Repository.DeleteAsync(id);
             if (result) return Deleted();
@@ -85,7 +84,7 @@ namespace BioEngine.Core.API
         }
 
         [HttpPost("publish/{id}")]
-        public virtual async Task<ActionResult<TResponse>> PublishAsync(TEntityPk id)
+        public virtual async Task<ActionResult<TResponse>> PublishAsync(Guid id)
         {
             var entity = await Repository.GetByIdAsync(id);
             if (entity != null)
@@ -103,7 +102,7 @@ namespace BioEngine.Core.API
         }
 
         [HttpPost("hide/{id}")]
-        public virtual async Task<ActionResult<TResponse>> HideAsync(TEntityPk id)
+        public virtual async Task<ActionResult<TResponse>> HideAsync(Guid id)
         {
             var entity = await Repository.GetByIdAsync(id);
             if (entity != null)
@@ -153,12 +152,12 @@ namespace BioEngine.Core.API
     }
 
     public abstract class
-        ResponseRequestRestController<TEntity, TEntityPk, TRequestResponse> :
-            RequestRestController<TEntity, TEntityPk, TRequestResponse, TRequestResponse>
-        where TEntity : class, IEntity<TEntityPk>
-        where TRequestResponse : class, IResponseRestModel<TEntity, TEntityPk>, IRequestRestModel<TEntity, TEntityPk>
+        ResponseRequestRestController<TEntity, TRequestResponse> :
+            RequestRestController<TEntity, TRequestResponse, TRequestResponse>
+        where TEntity : class, IEntity
+        where TRequestResponse : class, IResponseRestModel<TEntity>, IRequestRestModel<TEntity>
     {
-        protected ResponseRequestRestController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
+        protected ResponseRequestRestController(BaseControllerContext<TEntity> context) : base(context)
         {
         }
     }

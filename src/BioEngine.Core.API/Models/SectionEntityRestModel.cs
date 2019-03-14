@@ -1,13 +1,14 @@
+using System;
 using System.Threading.Tasks;
 using BioEngine.Core.Interfaces;
 
 namespace BioEngine.Core.API.Models
 {
-    public abstract class SectionEntityRestModel<TEntity, TEntityPk> : SiteEntityRestModel<TEntity, TEntityPk>
-        where TEntity : class, ISectionEntity<TEntityPk>, ISiteEntity<TEntityPk>, IEntity<TEntityPk>
+    public abstract class SectionEntityRestModel<TEntity> : SiteEntityRestModel<TEntity>
+        where TEntity : class, ISectionEntity, ISiteEntity, IEntity
     {
-        public int[] SectionIds { get; set; }
-        public int[] TagIds { get; set; }
+        public Guid[] SectionIds { get; set; }
+        public Guid[] TagIds { get; set; }
 
         protected override async Task ParseEntityAsync(TEntity entity)
         {

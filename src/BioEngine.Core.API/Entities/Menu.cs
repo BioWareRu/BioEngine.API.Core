@@ -5,8 +5,8 @@ using BioEngine.Core.Entities;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Menu : SingleSiteEntityRestModel<Core.Entities.Menu, int>, IRequestRestModel<Core.Entities.Menu, int>,
-        IResponseRestModel<Core.Entities.Menu, int>
+    public class Menu : SingleSiteEntityRestModel<Core.Entities.Menu>, IRequestRestModel<Core.Entities.Menu>,
+        IResponseRestModel<Core.Entities.Menu>
     {
         public string Title { get; set; }
         public List<MenuItem> Items { get; set; } = new List<MenuItem>();

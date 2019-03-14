@@ -3,9 +3,9 @@ using BioEngine.Core.Web;
 
 namespace BioEngine.Core.API.Controllers
 {
-    public class SitesController : ResponseRequestRestController<Site, int, Entities.Site>
+    public class SitesController : ResponseRequestRestController<Site, Entities.Site>
     {
-        public SitesController(BaseControllerContext<Site, int> context) : base(context)
+        public SitesController(BaseControllerContext<Site> context) : base(context)
         {
         }
     }

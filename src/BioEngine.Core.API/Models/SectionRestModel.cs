@@ -1,13 +1,12 @@
 using System.Threading.Tasks;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
-using BioEngine.Core.Storage;
 
 namespace BioEngine.Core.API.Models
 {
-    public abstract class SectionRestModel<TEntity, TEntityPk> : SiteEntityRestModel<TEntity, TEntityPk>,
-        IRequestRestModel<TEntity, TEntityPk>
-        where TEntity : Section, ISiteEntity<TEntityPk>, IEntity<TEntityPk>
+    public abstract class SectionRestModel<TEntity> : SiteEntityRestModel<TEntity>,
+        IRequestRestModel<TEntity>
+        where TEntity : Section, ISiteEntity, IEntity
     {
         public virtual string Title { get; set; }
         public virtual string Url { get; set; }
@@ -34,8 +33,8 @@ namespace BioEngine.Core.API.Models
         }
     }
 
-    public abstract class SectionRestModel<TEntity, TEntityPk, TData> : SectionRestModel<TEntity, TEntityPk>
-        where TEntity : Section, ITypedEntity<TData>, ISiteEntity<TEntityPk>, IEntity<TEntityPk>
+    public abstract class SectionRestModel<TEntity, TData> : SectionRestModel<TEntity>
+        where TEntity : Section, ITypedEntity<TData>, ISiteEntity, IEntity
         where TData : TypedData, new()
     {
         public TData Data { get; set; }
@@ -48,9 +47,9 @@ namespace BioEngine.Core.API.Models
         }
     }
 
-    public abstract class ResponseSectionRestModel<TEntity, TEntityPk> : SectionRestModel<TEntity, TEntityPk>,
-        IResponseRestModel<TEntity, TEntityPk>
-        where TEntity : Section, ISiteEntity<TEntityPk>, IEntity<TEntityPk>
+    public abstract class ResponseSectionRestModel<TEntity> : SectionRestModel<TEntity>,
+        IResponseRestModel<TEntity>
+        where TEntity : Section, ISiteEntity, IEntity
     {
         public virtual string Type { get; set; }
         public string TypeTitle { get; set; }
@@ -77,9 +76,9 @@ namespace BioEngine.Core.API.Models
         }
     }
 
-    public abstract class ResponseSectionRestModel<TEntity, TEntityPk, TData> : SectionRestModel<TEntity, TEntityPk>,
-        IResponseRestModel<TEntity, TEntityPk>
-        where TEntity : Section, ISiteEntity<TEntityPk>, IEntity<TEntityPk>, ITypedEntity<TData>
+    public abstract class ResponseSectionRestModel<TEntity, TData> : SectionRestModel<TEntity>,
+        IResponseRestModel<TEntity>
+        where TEntity : Section, ISiteEntity, IEntity, ITypedEntity<TData>
         where TData : TypedData, new()
     {
         public virtual string Type { get; set; }

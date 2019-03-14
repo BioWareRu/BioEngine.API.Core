@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
-using BioEngine.Core.Storage;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BioEngine.Core.API.Controllers
 {
-    public class PostsController : ContentController<Post, int, Entities.Post, Entities.PostRequestItem>
+    public class PostsController : ContentController<Post, Entities.Post, Entities.PostRequestItem>
     {
         private readonly IEnumerable<EntityMetadata> _entityMetadataList;
         private readonly BioContext _dbContext;
 
-        public PostsController(BaseControllerContext<Post, int> context, IEnumerable<EntityMetadata> entityMetadataList,
+        public PostsController(BaseControllerContext<Post> context, IEnumerable<EntityMetadata> entityMetadataList,
             BioContext dbContext) : base(context)
         {
             _entityMetadataList = entityMetadataList;

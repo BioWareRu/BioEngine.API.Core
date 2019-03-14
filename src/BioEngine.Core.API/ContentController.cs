@@ -7,13 +7,12 @@ using Post = BioEngine.Core.Entities.Post;
 namespace BioEngine.Core.API
 {
     public abstract class
-        ContentController<TEntity, TEntityPk, TResponse, TRequest> : RequestRestController<TEntity, TEntityPk, TResponse
-            , TRequest>
-        where TEntity : Post, IEntity<TEntityPk>
-        where TResponse : class, IResponseRestModel<TEntity, TEntityPk>
-        where TRequest : class, IRequestRestModel<TEntity, TEntityPk>
+        ContentController<TEntity, TResponse, TRequest> : RequestRestController<TEntity, TResponse, TRequest>
+        where TEntity : Post, IEntity
+        where TResponse : class, IResponseRestModel<TEntity>
+        where TRequest : class, IRequestRestModel<TEntity>
     {
-        protected ContentController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
+        protected ContentController(BaseControllerContext<TEntity> context) : base(context)
         {
         }
 

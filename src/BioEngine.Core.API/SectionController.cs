@@ -3,22 +3,21 @@ using System.Threading.Tasks;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
-using BioEngine.Core.Storage;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Core.API
 {
     public abstract class
-        SectionController<TEntity, TEntityPk, TData, TResponse, TRequest> : RequestRestController<TEntity, TEntityPk,
+        SectionController<TEntity, TData, TResponse, TRequest> : RequestRestController<TEntity,
             TResponse
             , TRequest>
-        where TEntity : Section<TData>, IEntity<TEntityPk>
+        where TEntity : Section<TData>, IEntity
         where TData : TypedData, new()
-        where TResponse : class, IResponseRestModel<TEntity, TEntityPk>
-        where TRequest : class, IRequestRestModel<TEntity, TEntityPk>
+        where TResponse : class, IResponseRestModel<TEntity>
+        where TRequest : class, IRequestRestModel<TEntity>
     {
-        protected SectionController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
+        protected SectionController(BaseControllerContext<TEntity> context) : base(context)
         {
         }
 
@@ -32,10 +31,10 @@ namespace BioEngine.Core.API
     }
 
     public abstract class
-        SectionController<TEntity, TEntityPk, TResponse> : ResponseRestController<TEntity, TEntityPk, TResponse>
-        where TEntity : Section, IEntity<TEntityPk> where TResponse : IResponseRestModel<TEntity, TEntityPk>
+        SectionController<TEntity, TResponse> : ResponseRestController<TEntity, TResponse>
+        where TEntity : Section, IEntity where TResponse : IResponseRestModel<TEntity>
     {
-        protected SectionController(BaseControllerContext<TEntity, TEntityPk> context) : base(context)
+        protected SectionController(BaseControllerContext<TEntity> context) : base(context)
         {
         }
     }

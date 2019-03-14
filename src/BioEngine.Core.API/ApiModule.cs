@@ -16,7 +16,7 @@ namespace BioEngine.Core.API
                 {typeof(ApiModule).Assembly};
             services.Scan(s =>
                 s.FromAssemblies(assembliesList).AddClasses(classes =>
-                        classes.AssignableToAny(typeof(IResponseRestModel<,>), typeof(IRequestRestModel<,>)))
+                        classes.AssignableToAny(typeof(IResponseRestModel<>), typeof(IRequestRestModel<>)))
                     .AsSelf());
         }
     }

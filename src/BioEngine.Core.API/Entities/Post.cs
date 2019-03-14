@@ -7,8 +7,8 @@ using BioEngine.Core.Interfaces;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class PostRequestItem : SectionEntityRestModel<Core.Entities.Post, int>,
-        IRequestRestModel<Core.Entities.Post, int>
+    public class PostRequestItem : SectionEntityRestModel<Core.Entities.Post>,
+        IRequestRestModel<Core.Entities.Post>
     {
         public string Title { get; set; }
         public string Url { get; set; }
@@ -28,7 +28,7 @@ namespace BioEngine.Core.API.Entities
         }
     }
 
-    public class Post : PostRequestItem, IResponseRestModel<Core.Entities.Post, int>
+    public class Post : PostRequestItem, IResponseRestModel<Core.Entities.Post>
     {
         public IUser Author { get; set; }
         public int AuthorId { get; set; }

@@ -3,8 +3,8 @@ using BioEngine.Core.API.Models;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Tag : RestModel<Core.Entities.Tag, int>, IRequestRestModel<Core.Entities.Tag, int>,
-        IResponseRestModel<Core.Entities.Tag, int>
+    public class Tag : RestModel<Core.Entities.Tag>, IRequestRestModel<Core.Entities.Tag>,
+        IResponseRestModel<Core.Entities.Tag>
     {
         public string Name { get; set; }
 

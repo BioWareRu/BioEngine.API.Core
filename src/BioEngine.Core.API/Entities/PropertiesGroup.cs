@@ -126,13 +126,13 @@ namespace BioEngine.Core.API.Entities
 
     public class PropertiesElementValue
     {
-        public PropertiesElementValue(int? siteId, object value)
+        public PropertiesElementValue(Guid? siteId, object value)
         {
             SiteId = siteId;
             Value = value;
         }
 
-        public int? SiteId { get; }
+        public Guid? SiteId { get; }
         public object Value { get; }
     }
 }

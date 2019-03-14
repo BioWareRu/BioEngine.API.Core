@@ -9,9 +9,9 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Models
 {
-    public abstract class RestModel<TEntity, TEntityPk> where TEntity : class, IEntity<TEntityPk>
+    public abstract class RestModel<TEntity> where TEntity : class, IEntity
     {
-        public TEntityPk Id { get; set; }
+        public Guid Id { get; set; }
         public DateTimeOffset DateAdded { get; set; }
         public DateTimeOffset DateUpdated { get; set; }
         public bool IsPublished { get; set; }

@@ -3,8 +3,8 @@ using BioEngine.Core.API.Models;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Site : RestModel<Core.Entities.Site, int>, IRequestRestModel<Core.Entities.Site, int>,
-        IResponseRestModel<Core.Entities.Site, int>
+    public class Site : RestModel<Core.Entities.Site>, IRequestRestModel<Core.Entities.Site>,
+        IResponseRestModel<Core.Entities.Site>
     {
         public string Title { get; set; }
         public string Url { get; set; }

@@ -3,8 +3,8 @@ using BioEngine.Core.Interfaces;
 
 namespace BioEngine.Core.API.Models
 {
-    public interface IResponseRestModel<in TEntity, TEntityPk>
-        where TEntity : class, IEntity<TEntityPk>
+    public interface IResponseRestModel<in TEntity>
+        where TEntity : class, IEntity
     {
         Task SetEntityAsync(TEntity entity);
     }
