@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
+using BioEngine.Core.Interfaces;
 using BioEngine.Core.Repository;
+using BioEngine.Core.Users;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Controllers
 {
@@ -16,12 +17,14 @@ namespace BioEngine.Core.API.Controllers
     {
         private readonly IEnumerable<EntityMetadata> _entityMetadataList;
         private readonly BioContext _dbContext;
+        private readonly IUserDataProvider _userDataProvider;
 
         public PostsController(BaseControllerContext<Post> context, IEnumerable<EntityMetadata> entityMetadataList,
-            BioContext dbContext) : base(context)
+            BioContext dbContext, IUserDataProvider userDataProvider) : base(context)
         {
             _entityMetadataList = entityMetadataList;
             _dbContext = dbContext;
+            _userDataProvider = userDataProvider;
         }
 
         private PostBlock CreateBlock(string type)
@@ -81,7 +84,11 @@ namespace BioEngine.Core.API.Controllers
         public async Task<ActionResult<List<PostVersionInfo>>> GetVersionsAsync(Guid postId)
         {
             var versions = await (Repository as PostsRepository).GetVersionsAsync(postId);
-            return Ok(versions.Select(v => new PostVersionInfo(v.Id, v.DateAdded)).ToList());
+            var userIds =
+                await _userDataProvider.GetDataAsync(versions.Select(v => v.ChangeAuthorId).Distinct().ToArray());
+            return Ok(versions.Select(v =>
+                    new PostVersionInfo(v.Id, v.DateAdded, userIds.FirstOrDefault(u => u.Id == v.ChangeAuthorId)))
+                .ToList());
         }
 
         [HttpGet("{postId}/versions/{versionId}")]
@@ -100,13 +107,16 @@ namespace BioEngine.Core.API.Controllers
 
     public class PostVersionInfo
     {
-        public PostVersionInfo(Guid id, DateTimeOffset date)
+        public PostVersionInfo(Guid id, DateTimeOffset date, IUser user)
         {
             Id = id;
             Date = date;
+            User = user;
         }
 
         public Guid Id { get; }
         public DateTimeOffset Date { get; }
+
+        public IUser User { get; }
     }
 }
