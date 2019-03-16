@@ -5,6 +5,7 @@ using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Interfaces;
+using BioEngine.Core.Repository;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,7 @@ namespace BioEngine.Core.API
         {
             var entity = await MapDomainModelAsync(item, Activator.CreateInstance<TEntity>());
 
-            var result = await Repository.AddAsync(entity);
+            var result = await Repository.AddAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
             if (result.IsSuccess)
             {
                 await AfterSaveAsync(item, result.Entity);
@@ -56,7 +57,7 @@ namespace BioEngine.Core.API
 
             entity = await MapDomainModelAsync(item, entity);
 
-            var result = await Repository.UpdateAsync(entity);
+            var result = await Repository.UpdateAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
             if (result.IsSuccess)
             {
                 await AfterSaveAsync(item, result.Entity);
@@ -78,7 +79,7 @@ namespace BioEngine.Core.API
         [HttpDelete("{id}")]
         public virtual async Task<ActionResult<TResponse>> DeleteAsync(Guid id)
         {
-            var result = await Repository.DeleteAsync(id);
+            var result = await Repository.DeleteAsync(id, new BioRepositoryOperationContext {User = CurrentUser});
             if (result) return Deleted();
             return BadRequest();
         }
@@ -94,7 +95,7 @@ namespace BioEngine.Core.API
                     return BadRequest();
                 }
 
-                await Repository.PublishAsync(entity);
+                await Repository.PublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
                 return Model(await MapRestModelAsync(entity));
             }
 
@@ -112,7 +113,7 @@ namespace BioEngine.Core.API
                     return BadRequest();
                 }
 
-                await Repository.UnPublishAsync(entity);
+                await Repository.UnPublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
                 return Model(await MapRestModelAsync(entity));
             }
 
@@ -141,8 +142,7 @@ namespace BioEngine.Core.API
         private ActionResult<TResponse> SaveResponse(int code,
             TResponse model)
         {
-            return new ObjectResult(new SaveModelResponse<TResponse>(code, model))
-                {StatusCode = code};
+            return new ObjectResult(new SaveModelResponse<TResponse>(code, model)) {StatusCode = code};
         }
 
         protected virtual Task AfterSaveAsync(TRequest restModel, TEntity domainModel)
