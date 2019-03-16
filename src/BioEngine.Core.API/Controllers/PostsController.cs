@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
+using BioEngine.Core.Repository;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BioEngine.Core.API.Controllers
 {
@@ -74,5 +76,37 @@ namespace BioEngine.Core.API.Controllers
             return await Storage.SaveFileAsync(file, name,
                 $"posts/{DateTimeOffset.UtcNow.Year}/{DateTimeOffset.UtcNow.Month}");
         }
+
+        [HttpGet("{postId}/versions")]
+        public async Task<ActionResult<List<PostVersionInfo>>> GetVersionsAsync(Guid postId)
+        {
+            var versions = await (Repository as PostsRepository).GetVersionsAsync(postId);
+            return Ok(versions.Select(v => new PostVersionInfo(v.Id, v.DateAdded)).ToList());
+        }
+
+        [HttpGet("{postId}/versions/{versionId}")]
+        public async Task<ActionResult<Entities.Post>> GetVersionsAsync(Guid postId, Guid versionId)
+        {
+            var version = await (Repository as PostsRepository).GetVersionAsync(postId, versionId);
+            if (version == null)
+            {
+                return NotFound();
+            }
+
+            var post = version.GetPost();
+            return Ok(await MapRestModelAsync(post));
+        }
+    }
+
+    public class PostVersionInfo
+    {
+        public PostVersionInfo(Guid id, DateTimeOffset date)
+        {
+            Id = id;
+            Date = date;
+        }
+
+        public Guid Id { get; }
+        public DateTimeOffset Date { get; }
     }
 }
