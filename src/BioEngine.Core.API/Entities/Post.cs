@@ -40,7 +40,7 @@ namespace BioEngine.Core.API.Entities
             Title = entity.Title;
             Url = entity.Url;
             Blocks = entity.Blocks != null
-                ? entity.Blocks.Select(ContentBlock.Create).ToList()
+                ? entity.Blocks.OrderBy(b => b.Position).Select(ContentBlock.Create).ToList()
                 : new List<ContentBlock>();
             AuthorId = entity.AuthorId;
             Author = entity.Author;
