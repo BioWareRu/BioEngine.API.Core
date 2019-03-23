@@ -62,7 +62,7 @@ namespace BioEngine.Core.API.Entities
         public int Position { get; set; }
         public object Data { get; set; }
 
-        public static ContentBlock Create(Core.Entities.PostBlock block)
+        public static ContentBlock Create(Core.Entities.ContentBlock block)
         {
             var contentBlock = new ContentBlock
             {

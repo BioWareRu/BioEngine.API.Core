@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using BioEngine.Core.API.Models;
 
 namespace BioEngine.Core.API.Entities
@@ -8,14 +10,13 @@ namespace BioEngine.Core.API.Entities
     {
         public virtual string Title { get; set; }
         public virtual string Url { get; set; }
-        public string Text { get; set; }
+        public List<ContentBlock> Blocks { get; set; }
 
         public async Task<Core.Entities.Page> GetEntityAsync(Core.Entities.Page entity)
         {
             entity = await FillEntityAsync(entity);
             entity.Title = Title;
             entity.Url = Url;
-            entity.Text = Text;
             return entity;
         }
 
@@ -24,7 +25,7 @@ namespace BioEngine.Core.API.Entities
             await ParseEntityAsync(entity);
             Title = entity.Title;
             Url = entity.Url;
-            Text = entity.Text;
+            Blocks = entity.Blocks.Select(ContentBlock.Create).ToList();
         }
     }
 }

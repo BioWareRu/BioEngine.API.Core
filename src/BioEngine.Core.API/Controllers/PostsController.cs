@@ -27,15 +27,15 @@ namespace BioEngine.Core.API.Controllers
             _userDataProvider = userDataProvider;
         }
 
-        private PostBlock CreateBlock(string type)
+        private ContentBlock CreateBlock(string type)
         {
             var blockType = _entityMetadataList.Where(entityMetadata =>
                     entityMetadata.EntityType.FullName == type &&
-                    typeof(PostBlock).IsAssignableFrom(entityMetadata.EntityType))
+                    typeof(ContentBlock).IsAssignableFrom(entityMetadata.EntityType))
                 .Select(e => e.EntityType).FirstOrDefault();
             if (blockType != null)
             {
-                return Activator.CreateInstance(blockType) as PostBlock;
+                return Activator.CreateInstance(blockType) as ContentBlock;
             }
 
             return null;
@@ -50,11 +50,11 @@ namespace BioEngine.Core.API.Controllers
                 domainModel.AuthorId = CurrentUser.Id;
             }
 
-            domainModel.Blocks = new List<PostBlock>();
+            domainModel.Blocks = new List<ContentBlock>();
             foreach (var contentBlock in restModel.Blocks)
             {
                 var block = await _dbContext.Blocks.FirstOrDefaultAsync(b =>
-                    b.Id == contentBlock.Id && b.Post == domainModel);
+                    b.Id == contentBlock.Id && b.ContentId == domainModel.Id);
                 if (block == null)
                 {
                     block = CreateBlock(contentBlock.Type);
@@ -63,7 +63,7 @@ namespace BioEngine.Core.API.Controllers
                 if (block != null)
                 {
                     block.Id = contentBlock.Id;
-                    block.Post = domainModel;
+                    block.ContentId = domainModel.Id;
                     block.Position = contentBlock.Position;
                     block.SetData(contentBlock.Data);
                     domainModel.Blocks.Add(block);

@@ -34,9 +34,10 @@ namespace BioEngine.Core.API
         }
 
         [HttpGet]
-        public virtual async Task<ActionResult<ListResponse<TResponse>>> GetAsync()
+        public virtual async Task<ActionResult<ListResponse<TResponse>>> GetAsync([FromQuery] int limit = 20,
+            [FromQuery] int offset = 0, [FromQuery] string order = null, [FromQuery] string filter = null)
         {
-            var result = await Repository.GetAllAsync(GetQueryContext());
+            var result = await Repository.GetAllAsync(GetQueryContext(limit, offset, order, filter));
             return await ListAsync(result);
         }
 
@@ -60,42 +61,41 @@ namespace BioEngine.Core.API
 
 
         [HttpGet("count")]
-        public virtual async Task<ActionResult<int>> CountAsync()
+        public virtual async Task<ActionResult<int>> CountAsync([FromQuery] int limit = 20,
+            [FromQuery] int offset = 0, [FromQuery] string order = null, [FromQuery] string filter = null)
         {
-            var result = await Repository.CountAsync(GetQueryContext());
+            var result = await Repository.CountAsync(GetQueryContext(limit, offset, order, filter));
             return Ok(result);
         }
 
-        protected QueryContext<TEntity> GetQueryContext()
+        protected QueryContext<TEntity> GetQueryContext(int limit, int offset, string order, string filter)
         {
             var context = new QueryContext<TEntity> {IncludeUnpublished = true};
-            if (Request.Query.ContainsKey("limit"))
+            if (limit>0)
             {
-                context.Limit = int.Parse(ControllerContext.HttpContext.Request.Query["limit"]);
+                context.Limit = limit;
             }
 
-            if (Request.Query.ContainsKey("offset"))
+            if (offset>0)
             {
-                context.Offset = int.Parse(ControllerContext.HttpContext.Request.Query["offset"]);
+                context.Offset = offset;
             }
 
-            if (Request.Query.ContainsKey("order"))
+            if (!string.IsNullOrEmpty(order))
             {
-                context.SetOrderByString(ControllerContext.HttpContext.Request.Query["order"]);
+                context.SetOrderByString(order);
             }
 
-            if (HttpContext.Request.Query.ContainsKey("filter") &&
-                !string.IsNullOrEmpty(ControllerContext.HttpContext.Request.Query["filter"]) &&
-                ControllerContext.HttpContext.Request.Query["filter"] != "null")
+            if (!string.IsNullOrEmpty(filter) &&
+                filter != "null")
             {
-                var str = ControllerContext.HttpContext.Request.Query["filter"].ToString();
-                var mod4 = str.Length % 4;
+                var mod4 = filter.Length % 4;
                 if (mod4 > 0)
                 {
-                    str += new string('=', 4 - mod4);
+                    filter += new string('=', 4 - mod4);
                 }
 
-                var data = Convert.FromBase64String(str);
+                var data = Convert.FromBase64String(filter);
                 var decodedString = HttpUtility.UrlDecode(Encoding.UTF8.GetString(data));
                 var where = JsonConvert.DeserializeObject<List<QueryContextConditionsGroup>>(decodedString);
                 if (where != null)
