@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.API.Entities;
-using BioEngine.Core.Interfaces;
+using BioEngine.Core.Entities;
 using BioEngine.Core.Properties;
 using Newtonsoft.Json;
 

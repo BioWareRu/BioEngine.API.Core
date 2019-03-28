@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BioEngine.Core.API.Models;
-using BioEngine.Core.Interfaces;
+using BioEngine.Core.Entities;
 using BioEngine.Core.Web;
 using Post = BioEngine.Core.Entities.Post;
 

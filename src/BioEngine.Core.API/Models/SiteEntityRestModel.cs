@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using BioEngine.Core.Interfaces;
+using BioEngine.Core.Entities;
 
 namespace BioEngine.Core.API.Models
 {

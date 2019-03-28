@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
 using BioEngine.Core.Entities;
-using BioEngine.Core.Interfaces;
 using BioEngine.Core.Repository;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Http;

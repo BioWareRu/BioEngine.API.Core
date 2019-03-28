@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.API.Models;
-using BioEngine.Core.Interfaces;
+using BioEngine.Core.Users;
 
 namespace BioEngine.Core.API.Entities
 {
