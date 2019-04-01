@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.Entities;
 
@@ -11,7 +13,7 @@ namespace BioEngine.Core.API.Models
         public virtual string Url { get; set; }
         public StorageItem Logo { get; set; }
         public StorageItem LogoSmall { get; set; }
-        public virtual string ShortDescription { get; set; }
+        public List<Entities.ContentBlock> Blocks { get; set; }
         public virtual string Hashtag { get; set; }
 
         public async Task<TEntity> GetEntityAsync(TEntity entity)
@@ -26,7 +28,6 @@ namespace BioEngine.Core.API.Models
             entity.Url = Url;
             entity.Logo = Logo;
             entity.LogoSmall = LogoSmall;
-            entity.ShortDescription = ShortDescription;
             entity.Hashtag = Hashtag;
             return entity;
         }
@@ -66,7 +67,7 @@ namespace BioEngine.Core.API.Models
             Url = entity.Url;
             Logo = entity.Logo;
             LogoSmall = entity.LogoSmall;
-            ShortDescription = entity.ShortDescription;
+            Blocks = entity.Blocks.Select(Entities.ContentBlock.Create).ToList();
             Hashtag = entity.Hashtag;
             if (entity is ITypedEntity typedEntity)
             {
@@ -97,7 +98,7 @@ namespace BioEngine.Core.API.Models
             Url = entity.Url;
             Logo = entity.Logo;
             LogoSmall = entity.LogoSmall;
-            ShortDescription = entity.ShortDescription;
+            Blocks = entity.Blocks.Select(Entities.ContentBlock.Create).ToList();
             Hashtag = entity.Hashtag;
             TypeTitle = entity.TypeTitle;
 
