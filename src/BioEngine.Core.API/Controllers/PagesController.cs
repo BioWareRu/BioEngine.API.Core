@@ -69,7 +69,7 @@ namespace BioEngine.Core.API.Controllers
         {
             var file = await GetBodyAsFileAsync();
             return await Storage.SaveFileAsync(file, name,
-                $"pages/{DateTimeOffset.UtcNow.Year}/{DateTimeOffset.UtcNow.Month}");
+                $"pages/{DateTimeOffset.UtcNow.Year.ToString()}/{DateTimeOffset.UtcNow.Month.ToString()}");
         }
     }
 }

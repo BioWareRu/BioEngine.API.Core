@@ -76,7 +76,7 @@ namespace BioEngine.Core.API.Controllers
         {
             var file = await GetBodyAsFileAsync();
             return await Storage.SaveFileAsync(file, name,
-                $"posts/{DateTimeOffset.UtcNow.Year}/{DateTimeOffset.UtcNow.Month}");
+                $"posts/{DateTimeOffset.UtcNow.Year.ToString()}/{DateTimeOffset.UtcNow.Month.ToString()}");
         }
 
         [HttpGet("{postId}/versions")]
