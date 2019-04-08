@@ -29,9 +29,9 @@ namespace BioEngine.Core.API.Controllers
         private ContentBlock CreateBlock(string type)
         {
             var blockType = _entityMetadataList.Where(entityMetadata =>
-                    entityMetadata.EntityType.FullName == type &&
-                    typeof(ContentBlock).IsAssignableFrom(entityMetadata.EntityType))
-                .Select(e => e.EntityType).FirstOrDefault();
+                    entityMetadata.Type == type &&
+                    typeof(ContentBlock).IsAssignableFrom(entityMetadata.ObjectType))
+                .Select(e => e.ObjectType).FirstOrDefault();
             if (blockType != null)
             {
                 return Activator.CreateInstance(blockType) as ContentBlock;
