@@ -25,7 +25,7 @@ namespace BioEngine.Core.API.Entities
             await ParseEntityAsync(entity);
             Title = entity.Title;
             Url = entity.Url;
-            Blocks = entity.Blocks.Select(ContentBlock.Create).ToList();
+            Blocks = entity.Blocks?.Select(ContentBlock.Create).ToList();
         }
     }
 }

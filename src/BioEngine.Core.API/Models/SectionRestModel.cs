@@ -67,7 +67,7 @@ namespace BioEngine.Core.API.Models
             Url = entity.Url;
             Logo = entity.Logo;
             LogoSmall = entity.LogoSmall;
-            Blocks = entity.Blocks.Select(Entities.ContentBlock.Create).ToList();
+            Blocks = entity.Blocks?.Select(Entities.ContentBlock.Create).ToList();
             Hashtag = entity.Hashtag;
             if (entity is ITypedEntity typedEntity)
             {
@@ -98,7 +98,7 @@ namespace BioEngine.Core.API.Models
             Url = entity.Url;
             Logo = entity.Logo;
             LogoSmall = entity.LogoSmall;
-            Blocks = entity.Blocks.Select(Entities.ContentBlock.Create).ToList();
+            Blocks = entity.Blocks?.Select(Entities.ContentBlock.Create).ToList();
             Hashtag = entity.Hashtag;
             TypeTitle = entity.TypeTitle;
 
