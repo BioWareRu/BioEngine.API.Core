@@ -6,7 +6,7 @@ using BioEngine.Core.Entities;
 namespace BioEngine.Core.API.Models
 {
     public abstract class SectionRestModel<TEntity> : SiteEntityRestModel<TEntity>,
-        IRequestRestModel<TEntity>
+        IContentRequestRestModel<TEntity>
         where TEntity : Section, ISiteEntity, IEntity
     {
         public virtual string Title { get; set; }
@@ -77,7 +77,7 @@ namespace BioEngine.Core.API.Models
     }
 
     public abstract class ResponseSectionRestModel<TEntity, TData> : SectionRestModel<TEntity>,
-        IResponseRestModel<TEntity>
+        IContentResponseRestModel<TEntity>
         where TEntity : Section, ISiteEntity, IEntity, ITypedEntity<TData>
         where TData : TypedData, new()
     {

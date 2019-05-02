@@ -5,8 +5,8 @@ using BioEngine.Core.API.Models;
 
 namespace BioEngine.Core.API.Entities
 {
-    public class Page : SiteEntityRestModel<Core.Entities.Page>, IRequestRestModel<Core.Entities.Page>,
-        IResponseRestModel<Core.Entities.Page>
+    public class Page : SiteEntityRestModel<Core.Entities.Page>, IContentRequestRestModel<Core.Entities.Page>,
+        IContentResponseRestModel<Core.Entities.Page>
     {
         public virtual string Title { get; set; }
         public virtual string Url { get; set; }
