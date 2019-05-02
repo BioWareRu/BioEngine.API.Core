@@ -52,7 +52,7 @@ namespace BioEngine.Core.API.Entities
             var key = Key.Replace("-", ".");
             var propertiesSet = PropertiesProvider.GetInstance(key);
 
-            var entry = new PropertiesEntry(key, PropertiesProvider.GetSchema(propertiesSet.GetType()));
+            var entry = new PropertiesEntry(key, PropertiesProvider.GetSchema(key));
             var propertiesValues = new List<PropertiesValue>();
 
             foreach (var propertiesElement in Properties)
