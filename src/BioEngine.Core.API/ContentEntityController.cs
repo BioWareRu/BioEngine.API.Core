@@ -58,6 +58,8 @@ namespace BioEngine.Core.API
                     block.ContentId = domainModel.Id;
                     block.Position = contentBlock.Position;
                     block.SetData(contentBlock.Data);
+                    block.DateUpdated = DateTimeOffset.UtcNow;
+                    block.DatePublished = DateTimeOffset.UtcNow;
                     domainModel.Blocks.Add(block);
                 }
             }
