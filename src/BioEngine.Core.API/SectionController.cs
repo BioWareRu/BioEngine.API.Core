@@ -14,7 +14,7 @@ namespace BioEngine.Core.API
             TResponse
             , TRequest>
         where TEntity : Section<TData>, IEntity
-        where TData : TypedData, new()
+        where TData : ITypedData, new()
         where TResponse : class, IContentResponseRestModel<TEntity>
         where TRequest : SectionRestModel<TEntity>, IContentRequestRestModel<TEntity>
     {

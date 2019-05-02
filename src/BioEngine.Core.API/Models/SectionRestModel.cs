@@ -35,7 +35,7 @@ namespace BioEngine.Core.API.Models
 
     public abstract class SectionRestModel<TEntity, TData> : SectionRestModel<TEntity>
         where TEntity : Section, ITypedEntity<TData>, ISiteEntity, IEntity
-        where TData : TypedData, new()
+        where TData : ITypedData, new()
     {
         public TData Data { get; set; }
 
@@ -79,7 +79,7 @@ namespace BioEngine.Core.API.Models
     public abstract class ResponseSectionRestModel<TEntity, TData> : SectionRestModel<TEntity>,
         IContentResponseRestModel<TEntity>
         where TEntity : Section, ISiteEntity, IEntity, ITypedEntity<TData>
-        where TData : TypedData, new()
+        where TData : ITypedData, new()
     {
         public virtual string Type { get; set; }
         public string TypeTitle { get; set; }
