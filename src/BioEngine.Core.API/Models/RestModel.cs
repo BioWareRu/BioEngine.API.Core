@@ -15,6 +15,9 @@ namespace BioEngine.Core.API.Models
         public DateTimeOffset DateAdded { get; set; }
         public DateTimeOffset DateUpdated { get; set; }
         public bool IsPublished { get; set; }
+        
+        public string Title { get; set; }
+        public string Url { get; set; }
         public DateTimeOffset? DatePublished { get; set; }
 
         [JsonIgnore] public List<PropertiesEntry> Properties { get; set; }
@@ -27,6 +30,8 @@ namespace BioEngine.Core.API.Models
             DateUpdated = entity.DateUpdated;
             IsPublished = entity.IsPublished;
             DatePublished = entity.DatePublished;
+            Title = entity.Title;
+            Url = entity.Url;
             PropertiesGroups =
                 entity.Properties.Select(PropertiesGroup.Create).ToList();
             return Task.CompletedTask;
@@ -34,8 +39,10 @@ namespace BioEngine.Core.API.Models
 
         protected virtual Task<TEntity> FillEntityAsync(TEntity entity)
         {
-            entity = entity ?? CreateEntity();
+            entity ??= CreateEntity();
             entity.Id = Id;
+            entity.Title = Title;
+            entity.Url = Url;
             entity.Properties = PropertiesGroups?.Select(s => s.GetPropertiesEntry()).ToList();
             return Task.FromResult(entity);
         }

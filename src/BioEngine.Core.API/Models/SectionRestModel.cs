@@ -9,8 +9,6 @@ namespace BioEngine.Core.API.Models
         IContentRequestRestModel<TEntity>
         where TEntity : Section, ISiteEntity, IEntity
     {
-        public virtual string Title { get; set; }
-        public virtual string Url { get; set; }
         public StorageItem Logo { get; set; }
         public StorageItem LogoSmall { get; set; }
         public List<Entities.ContentBlock> Blocks { get; set; }
@@ -24,8 +22,6 @@ namespace BioEngine.Core.API.Models
         protected override async Task<TEntity> FillEntityAsync(TEntity entity)
         {
             entity = await base.FillEntityAsync(entity);
-            entity.Title = Title;
-            entity.Url = Url;
             entity.Logo = Logo;
             entity.LogoSmall = LogoSmall;
             entity.Hashtag = Hashtag;
@@ -63,8 +59,6 @@ namespace BioEngine.Core.API.Models
         {
             await base.ParseEntityAsync(entity);
             Type = entity.Type;
-            Title = entity.Title;
-            Url = entity.Url;
             Logo = entity.Logo;
             LogoSmall = entity.LogoSmall;
             Blocks = entity.Blocks?.Select(Entities.ContentBlock.Create).ToList();
@@ -94,8 +88,6 @@ namespace BioEngine.Core.API.Models
         {
             await base.ParseEntityAsync(entity);
             Type = entity.Type;
-            Title = entity.Title;
-            Url = entity.Url;
             Logo = entity.Logo;
             LogoSmall = entity.LogoSmall;
             Blocks = entity.Blocks?.Select(Entities.ContentBlock.Create).ToList();

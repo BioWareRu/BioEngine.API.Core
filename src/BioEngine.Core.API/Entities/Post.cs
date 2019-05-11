@@ -10,8 +10,6 @@ namespace BioEngine.Core.API.Entities
     public class PostRequestItem : SectionEntityRestModel<Core.Entities.Post>,
         IContentRequestRestModel<Core.Entities.Post>
     {
-        public string Title { get; set; }
-        public string Url { get; set; }
         public List<ContentBlock> Blocks { get; set; }
 
         public async Task<Core.Entities.Post> GetEntityAsync(Core.Entities.Post entity)
@@ -22,8 +20,6 @@ namespace BioEngine.Core.API.Entities
         protected override async Task<Core.Entities.Post> FillEntityAsync(Core.Entities.Post entity)
         {
             entity = await base.FillEntityAsync(entity);
-            entity.Title = Title;
-            entity.Url = Url;
             return entity;
         }
     }
@@ -37,8 +33,6 @@ namespace BioEngine.Core.API.Entities
         protected override async Task ParseEntityAsync(Core.Entities.Post entity)
         {
             await base.ParseEntityAsync(entity);
-            Title = entity.Title;
-            Url = entity.Url;
             Blocks = entity.Blocks != null
                 ? entity.Blocks.OrderBy(b => b.Position).Select(ContentBlock.Create).ToList()
                 : new List<ContentBlock>();
