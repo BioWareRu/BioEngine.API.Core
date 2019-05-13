@@ -9,8 +9,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\BioEngine.Core\src\BioEngine.Core\BioEngine.Core.csproj" Condition="Exists('..\..\..\BioEngine.Core')"/>
+    <ProjectReference Include="..\..\..\BioEngine.Core\src\BioEngine.Core.Web\BioEngine.Core.Web.csproj" Condition="Exists('..\..\..\BioEngine.Core')"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BioEngine.Core" Version="3.0.*" Condition="!Exists('..\..\..\BioEngine.Core')"/>
+    <PackageReference Include="BioEngine.Core.Web" Version="3.0.*" Condition="!Exists('..\..\..\BioEngine.Core')"/>
   </ItemGroup>
 </Project>

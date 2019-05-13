@@ -1,28 +1,30 @@
-using System.Collections.Generic;
 using System.Reflection;
 using BioEngine.Core.API.Models;
-using BioEngine.Core.Modules;
+using BioEngine.Core.Web;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace BioEngine.Core.API
 {
-    public class ApiModule : BioEngineModule<ApiModuleConfig>
+    public class ApiModule : WebModule
     {
-        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+        public override void ConfigureServices(IServiceCollection services, IConfiguration configuration,
+            IHostEnvironment environment)
         {
-            var assembliesList = new List<Assembly>(Config.Assemblies)
-                {typeof(ApiModule).Assembly};
-            services.Scan(s =>
-                s.FromAssemblies(assembliesList).AddClasses(classes =>
-                        classes.AssignableToAny(typeof(IResponseRestModel<>), typeof(IRequestRestModel<>)))
-                    .AsSelf());
+            base.ConfigureServices(services, configuration, environment);
+            services.RegisterApiEntities(GetType().Assembly);
         }
     }
 
-    public class ApiModuleConfig
+    public static class ApiServiceExtensions
     {
-        public List<Assembly> Assemblies { get; } = new List<Assembly>();
+        public static IServiceCollection RegisterApiEntities(this IServiceCollection services, Assembly assembly)
+        {
+            return services.Scan(s =>
+                s.FromAssemblies(assembly).AddClasses(classes =>
+                        classes.AssignableToAny(typeof(IResponseRestModel<>), typeof(IRequestRestModel<>)))
+                    .AsSelf());
+        }
     }
 }
