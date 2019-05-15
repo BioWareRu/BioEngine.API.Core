@@ -25,12 +25,12 @@ namespace BioEngine.Core.API.Entities
             Mode = mode;
         }
 
-        public static PropertiesGroup Create(PropertiesEntry propertiesEntry)
+        public static PropertiesGroup Create(PropertiesEntry propertiesEntry, PropertiesSchema schema)
         {
-            var restModel = new PropertiesGroup(propertiesEntry.Schema.Name, propertiesEntry.Schema.Key.Replace(".", "-"),
-                propertiesEntry.Schema.IsEditable, propertiesEntry.Schema.Mode);
+            var restModel = new PropertiesGroup(schema.Name, schema.Key.Replace(".", "-"),
+                schema.IsEditable, schema.Mode);
 
-            foreach (var propertyInfo in propertiesEntry.Schema.Properties)
+            foreach (var propertyInfo in schema.Properties)
             {
                 var values = new List<PropertiesElementValue>();
                 foreach (var propertiesValue in propertiesEntry.Properties)
@@ -52,7 +52,7 @@ namespace BioEngine.Core.API.Entities
             var key = Key.Replace("-", ".");
             var propertiesSet = PropertiesProvider.GetInstance(key);
 
-            var entry = new PropertiesEntry(key, PropertiesProvider.GetSchema(key));
+            var entry = new PropertiesEntry(key);
             var propertiesValues = new List<PropertiesValue>();
 
             foreach (var propertiesElement in Properties)

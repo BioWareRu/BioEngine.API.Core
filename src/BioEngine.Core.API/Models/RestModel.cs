@@ -15,7 +15,7 @@ namespace BioEngine.Core.API.Models
         public DateTimeOffset DateAdded { get; set; }
         public DateTimeOffset DateUpdated { get; set; }
         public bool IsPublished { get; set; }
-        
+
         public string Title { get; set; }
         public string Url { get; set; }
         public DateTimeOffset? DatePublished { get; set; }
@@ -33,7 +33,7 @@ namespace BioEngine.Core.API.Models
             Title = entity.Title;
             Url = entity.Url;
             PropertiesGroups =
-                entity.Properties.Select(PropertiesGroup.Create).ToList();
+                entity.Properties.Select(p => PropertiesGroup.Create(p, PropertiesProvider.GetSchema(p.Key))).ToList();
             return Task.CompletedTask;
         }
 
