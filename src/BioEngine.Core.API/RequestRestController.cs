@@ -37,7 +37,7 @@ namespace BioEngine.Core.API
             var result = await Repository.AddAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
             if (result.IsSuccess)
             {
-                await AfterSaveAsync(item, result.Entity);
+                await AfterSaveAsync(result.Entity, result.Changes, item);
                 return Created(await MapRestModelAsync(result.Entity));
             }
 
@@ -59,7 +59,7 @@ namespace BioEngine.Core.API
             var result = await Repository.UpdateAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
             if (result.IsSuccess)
             {
-                await AfterSaveAsync(item, result.Entity);
+                await AfterSaveAsync(result.Entity, result.Changes, item);
                 return Updated(await MapRestModelAsync(result.Entity));
             }
 
@@ -79,7 +79,12 @@ namespace BioEngine.Core.API
         public virtual async Task<ActionResult<TResponse>> DeleteAsync(Guid id)
         {
             var result = await Repository.DeleteAsync(id, new BioRepositoryOperationContext {User = CurrentUser});
-            if (result) return Deleted();
+            if (result != null)
+            {
+                await AfterDeleteAsync(result);
+                return Deleted();
+            }
+
             return BadRequest();
         }
 
@@ -144,7 +149,13 @@ namespace BioEngine.Core.API
             return new ObjectResult(new SaveModelResponse<TResponse>(code, model)) {StatusCode = code};
         }
 
-        protected virtual Task AfterSaveAsync(TRequest restModel, TEntity domainModel)
+        protected virtual Task AfterSaveAsync(TEntity domainModel, PropertyChange[] changes = null,
+            TRequest request = null)
+        {
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task AfterDeleteAsync(TEntity domainModel)
         {
             return Task.CompletedTask;
         }
