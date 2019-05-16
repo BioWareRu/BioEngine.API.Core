@@ -8,17 +8,20 @@ namespace BioEngine.Core.API.Models
         where TEntity : class, ISiteEntity, IEntity
     {
         public Guid[] SiteIds { get; set; }
+        public Guid MainSiteId { get; set; }
 
         protected override async Task ParseEntityAsync(TEntity entity)
         {
             await base.ParseEntityAsync(entity);
             SiteIds = entity.SiteIds;
+            MainSiteId = entity.MainSiteId;
         }
 
         protected override async Task<TEntity> FillEntityAsync(TEntity entity)
         {
             entity = await base.FillEntityAsync(entity);
             entity.SiteIds = SiteIds;
+            entity.MainSiteId = MainSiteId;
             return entity;
         }
     }
