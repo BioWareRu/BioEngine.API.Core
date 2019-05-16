@@ -47,10 +47,15 @@ namespace BioEngine.Core.API
 
             domainModel.Blocks = new List<ContentBlock>();
             var dbBlocks = await _blocksRepository.GetByIdsAsync(restModel.Blocks.Select(b => b.Id).ToArray());
+            _blocksRepository.BeginBatch();
             foreach (var contentBlock in restModel.Blocks)
             {
-                var block = dbBlocks.FirstOrDefault(b => b.Id == contentBlock.Id && b.ContentId == domainModel.Id) ??
-                            CreateBlock(contentBlock.Type);
+                var block = dbBlocks.FirstOrDefault(b => b.Id == contentBlock.Id && b.ContentId == domainModel.Id);
+                if (block == null)
+                {
+                    block = CreateBlock(contentBlock.Type);
+                    await _blocksRepository.AddAsync(block);
+                }
 
                 if (block != null)
                 {
