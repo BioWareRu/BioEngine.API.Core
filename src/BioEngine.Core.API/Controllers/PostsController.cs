@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Core.API.Controllers
 {
-    public class PostsController : ContentEntityController<Post, Entities.Post, Entities.PostRequestItem>
+    public abstract class ApiPostsController : ContentEntityController<Post, Entities.Post, Entities.PostRequestItem>
     {
         private readonly IUserDataProvider _userDataProvider;
 
-        public PostsController(BaseControllerContext<Post> context, BioEntityMetadataManager metadataManager,
+        protected ApiPostsController(BaseControllerContext<Post> context, BioEntityMetadataManager metadataManager,
             ContentBlocksRepository blocksRepository, IUserDataProvider userDataProvider) : base(context,
             metadataManager, blocksRepository)
         {
