@@ -14,11 +14,9 @@ namespace BioEngine.Core.API.Models
         public Guid Id { get; set; }
         public DateTimeOffset DateAdded { get; set; }
         public DateTimeOffset DateUpdated { get; set; }
-        public bool IsPublished { get; set; }
 
         public string Title { get; set; }
         public string Url { get; set; }
-        public DateTimeOffset? DatePublished { get; set; }
 
         [JsonIgnore] public List<PropertiesEntry> Properties { get; set; }
         public List<PropertiesGroup> PropertiesGroups { get; set; }
@@ -28,8 +26,7 @@ namespace BioEngine.Core.API.Models
             Id = entity.Id;
             DateAdded = entity.DateAdded;
             DateUpdated = entity.DateUpdated;
-            IsPublished = entity.IsPublished;
-            DatePublished = entity.DatePublished;
+            
             Title = entity.Title;
             Url = entity.Url;
             PropertiesGroups =

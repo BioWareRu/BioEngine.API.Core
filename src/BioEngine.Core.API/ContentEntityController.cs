@@ -7,19 +7,23 @@ using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Repository;
 using BioEngine.Core.Web;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BioEngine.Core.API
 {
     public abstract class
-        ContentEntityController<TEntity, TResponse, TRequest> : RequestRestController<TEntity, TResponse, TRequest>
+        ContentEntityController<TEntity, TRepository, TResponse, TRequest> : RequestRestController<
+            TEntity, ContentEntityQueryContext<TEntity>, TRepository, TResponse, TRequest>
         where TEntity : class, IContentEntity, IEntity
         where TResponse : class, IContentResponseRestModel<TEntity>
         where TRequest : class, IContentRequestRestModel<TEntity>
+        where TRepository : IContentEntityRepository<TEntity, ContentEntityQueryContext<TEntity>>
     {
         private readonly ContentBlocksRepository _blocksRepository;
         protected BioEntityMetadataManager MetadataManager { get; }
 
-        protected ContentEntityController(BaseControllerContext<TEntity> context,
+        protected ContentEntityController(
+            BaseControllerContext<TEntity, ContentEntityQueryContext<TEntity>, TRepository> context,
             BioEntityMetadataManager metadataManager, ContentBlocksRepository blocksRepository) : base(context)
         {
             _blocksRepository = blocksRepository;
@@ -64,12 +68,47 @@ namespace BioEngine.Core.API
                     block.Position = contentBlock.Position;
                     block.SetData(contentBlock.Data);
                     block.DateUpdated = DateTimeOffset.UtcNow;
-                    block.DatePublished = DateTimeOffset.UtcNow;
                     domainModel.Blocks.Add(block);
                 }
             }
 
             return domainModel;
+        }
+
+        [HttpPost("publish/{id}")]
+        public virtual async Task<ActionResult<TResponse>> PublishAsync(Guid id)
+        {
+            var entity = await Repository.GetByIdAsync(id);
+            if (entity != null)
+            {
+                if (entity.IsPublished)
+                {
+                    return BadRequest();
+                }
+
+                await Repository.PublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
+                return Model(await MapRestModelAsync(entity));
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost("hide/{id}")]
+        public virtual async Task<ActionResult<TResponse>> HideAsync(Guid id)
+        {
+            var entity = await Repository.GetByIdAsync(id);
+            if (entity != null)
+            {
+                if (!entity.IsPublished)
+                {
+                    return BadRequest();
+                }
+
+                await Repository.UnPublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
+                return Model(await MapRestModelAsync(entity));
+            }
+
+            return NotFound();
         }
     }
 }

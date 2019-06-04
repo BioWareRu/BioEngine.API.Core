@@ -10,15 +10,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace BioEngine.Core.API
 {
     public abstract class
-        SectionController<TEntity, TData, TResponse, TRequest> : ContentEntityController<TEntity,
+        SectionController<TEntity, TData, TRepository, TResponse, TRequest> : ContentEntityController<
+            TEntity, TRepository,
             TResponse
             , TRequest>
         where TEntity : Section<TData>, IEntity
         where TData : ITypedData, new()
         where TResponse : class, IContentResponseRestModel<TEntity>
         where TRequest : SectionRestModel<TEntity>, IContentRequestRestModel<TEntity>
+        where TRepository : IContentEntityRepository<TEntity, ContentEntityQueryContext<TEntity>>
     {
-        protected SectionController(BaseControllerContext<TEntity> context, BioEntityMetadataManager metadataManager,
+        protected SectionController(BaseControllerContext<TEntity, ContentEntityQueryContext<TEntity>, TRepository> context,
+            BioEntityMetadataManager metadataManager,
             ContentBlocksRepository blocksRepository) : base(context, metadataManager, blocksRepository)
         {
         }
@@ -34,10 +37,14 @@ namespace BioEngine.Core.API
     }
 
     public abstract class
-        SectionController<TEntity, TResponse> : ResponseRestController<TEntity, TResponse>
-        where TEntity : Section, IEntity where TResponse : IResponseRestModel<TEntity>
+        SectionController<TEntity, TQueryContext, TRepository, TResponse> : ResponseRestController<TEntity,
+            TQueryContext, TRepository, TResponse>
+        where TEntity : Section, IEntity
+        where TResponse : IResponseRestModel<TEntity>
+        where TRepository : IBioRepository<TEntity, TQueryContext>
+        where TQueryContext : QueryContext<TEntity>, new()
     {
-        protected SectionController(BaseControllerContext<TEntity> context) : base(context)
+        protected SectionController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) : base(context)
         {
         }
     }

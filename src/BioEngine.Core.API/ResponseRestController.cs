@@ -17,12 +17,15 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Core.API
 {
-    public abstract class ResponseRestController<TEntity, TResponse> : ApiController
-        where TResponse : IResponseRestModel<TEntity> where TEntity : class, IEntity
+    public abstract class ResponseRestController<TEntity, TQueryContext, TRepository, TResponse> : ApiController
+        where TResponse : IResponseRestModel<TEntity>
+        where TEntity : class, IEntity
+        where TQueryContext : QueryContext<TEntity>, new()
+        where TRepository : IBioRepository<TEntity, TQueryContext>
     {
-        protected IBioRepository<TEntity> Repository { get; }
+        protected TRepository Repository { get; }
 
-        protected ResponseRestController(BaseControllerContext<TEntity> context) : base(context)
+        protected ResponseRestController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) : base(context)
         {
             Repository = context.Repository;
         }
@@ -69,15 +72,15 @@ namespace BioEngine.Core.API
             return Ok(result);
         }
 
-        protected QueryContext<TEntity> GetQueryContext(int limit, int offset, string order, string filter)
+        protected TQueryContext GetQueryContext(int limit, int offset, string order, string filter)
         {
-            var context = new QueryContext<TEntity> {IncludeUnpublished = true};
-            if (limit>0)
+            var context = new TQueryContext();
+            if (limit > 0)
             {
                 context.Limit = limit;
             }
 
-            if (offset>0)
+            if (offset > 0)
             {
                 context.Offset = offset;
             }

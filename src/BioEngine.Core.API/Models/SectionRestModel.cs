@@ -5,27 +5,16 @@ using BioEngine.Core.Entities;
 
 namespace BioEngine.Core.API.Models
 {
-    public abstract class SectionRestModel<TEntity> : SiteEntityRestModel<TEntity>,
+    public abstract class SectionRestModel<TEntity> : ContentEntityRestModel<TEntity>,
         IContentRequestRestModel<TEntity>
         where TEntity : Section, ISiteEntity, IEntity
     {
-        public StorageItem Logo { get; set; }
-        public StorageItem LogoSmall { get; set; }
+        
         public List<Entities.ContentBlock> Blocks { get; set; }
-        public virtual string Hashtag { get; set; }
-
+        
         public async Task<TEntity> GetEntityAsync(TEntity entity)
         {
             return await FillEntityAsync(entity);
-        }
-
-        protected override async Task<TEntity> FillEntityAsync(TEntity entity)
-        {
-            entity = await base.FillEntityAsync(entity);
-            entity.Logo = Logo;
-            entity.LogoSmall = LogoSmall;
-            entity.Hashtag = Hashtag;
-            return entity;
         }
     }
 
@@ -59,10 +48,7 @@ namespace BioEngine.Core.API.Models
         {
             await base.ParseEntityAsync(entity);
             Type = entity.Type;
-            Logo = entity.Logo;
-            LogoSmall = entity.LogoSmall;
             Blocks = entity.Blocks?.Select(Entities.ContentBlock.Create).ToList();
-            Hashtag = entity.Hashtag;
             if (entity is ITypedEntity typedEntity)
             {
                 TypeTitle = typedEntity.TypeTitle;
@@ -88,10 +74,7 @@ namespace BioEngine.Core.API.Models
         {
             await base.ParseEntityAsync(entity);
             Type = entity.Type;
-            Logo = entity.Logo;
-            LogoSmall = entity.LogoSmall;
             Blocks = entity.Blocks?.Select(Entities.ContentBlock.Create).ToList();
-            Hashtag = entity.Hashtag;
             TypeTitle = entity.TypeTitle;
 
             Data = entity.Data;

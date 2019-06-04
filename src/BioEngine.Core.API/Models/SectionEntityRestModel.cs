@@ -4,8 +4,8 @@ using BioEngine.Core.Entities;
 
 namespace BioEngine.Core.API.Models
 {
-    public abstract class SectionEntityRestModel<TEntity> : SiteEntityRestModel<TEntity>
-        where TEntity : class, ISectionEntity, ISiteEntity, IEntity
+    public abstract class SectionEntityRestModel<TEntity> : ContentEntityRestModel<TEntity>
+        where TEntity : class, ISectionEntity, IContentEntity
     {
         public Guid[] SectionIds { get; set; }
         public Guid[] TagIds { get; set; }

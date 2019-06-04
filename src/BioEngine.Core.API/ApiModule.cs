@@ -26,6 +26,14 @@ namespace BioEngine.Core.API
                         classes.AssignableToAny(typeof(IResponseRestModel<>), typeof(IRequestRestModel<>)))
                     .AsSelf());
         }
+
+        public static IServiceCollection RegisterApiEntities<T>(this IServiceCollection services)
+        {
+            return services.Scan(s =>
+                s.FromAssemblies(typeof(T).Assembly).AddClasses(classes =>
+                        classes.AssignableToAny(typeof(IResponseRestModel<>), typeof(IRequestRestModel<>)))
+                    .AsSelf());
+        }
     }
 
     public class ApiModuleConfig : WebModuleConfig

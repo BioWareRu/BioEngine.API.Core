@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
+using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Repository;
 using BioEngine.Core.Web;
@@ -12,13 +13,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace BioEngine.Core.API
 {
     public abstract class
-        RequestRestController<TEntity, TResponse, TRequest> : ResponseRestController<TEntity,
+        RequestRestController<TEntity, TQueryContext, TRepository, TResponse, TRequest> : ResponseRestController<TEntity
+            , TQueryContext, TRepository,
             TResponse>
         where TEntity : class, IEntity
         where TResponse : class, IResponseRestModel<TEntity>
         where TRequest : class, IRequestRestModel<TEntity>
+        where TQueryContext : QueryContext<TEntity>, new()
+        where TRepository : IBioRepository<TEntity, TQueryContext>
     {
-        protected RequestRestController(BaseControllerContext<TEntity> context) : base(context)
+        protected RequestRestController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) :
+            base(context)
         {
         }
 
@@ -88,42 +93,6 @@ namespace BioEngine.Core.API
             return BadRequest();
         }
 
-        [HttpPost("publish/{id}")]
-        public virtual async Task<ActionResult<TResponse>> PublishAsync(Guid id)
-        {
-            var entity = await Repository.GetByIdAsync(id);
-            if (entity != null)
-            {
-                if (entity.IsPublished)
-                {
-                    return BadRequest();
-                }
-
-                await Repository.PublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
-                return Model(await MapRestModelAsync(entity));
-            }
-
-            return NotFound();
-        }
-
-        [HttpPost("hide/{id}")]
-        public virtual async Task<ActionResult<TResponse>> HideAsync(Guid id)
-        {
-            var entity = await Repository.GetByIdAsync(id);
-            if (entity != null)
-            {
-                if (!entity.IsPublished)
-                {
-                    return BadRequest();
-                }
-
-                await Repository.UnPublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
-                return Model(await MapRestModelAsync(entity));
-            }
-
-            return NotFound();
-        }
-
 
         protected ActionResult<TResponse> Created(
             TResponse model)
@@ -162,12 +131,15 @@ namespace BioEngine.Core.API
     }
 
     public abstract class
-        ResponseRequestRestController<TEntity, TRequestResponse> :
-            RequestRestController<TEntity, TRequestResponse, TRequestResponse>
+        ResponseRequestRestController<TEntity, TQueryContext, TRepository, TRequestResponse> :
+            RequestRestController<TEntity, TQueryContext, TRepository, TRequestResponse, TRequestResponse>
         where TEntity : class, IEntity
         where TRequestResponse : class, IResponseRestModel<TEntity>, IRequestRestModel<TEntity>
+        where TQueryContext : QueryContext<TEntity>, new()
+        where TRepository : IBioRepository<TEntity, TQueryContext>
     {
-        protected ResponseRequestRestController(BaseControllerContext<TEntity> context) : base(context)
+        protected ResponseRequestRestController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) :
+            base(context)
         {
         }
     }
