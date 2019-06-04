@@ -20,19 +20,19 @@ namespace BioEngine.Core.API
         where TRepository : IContentEntityRepository<TEntity, ContentEntityQueryContext<TEntity>>
     {
         private readonly ContentBlocksRepository _blocksRepository;
-        protected BioEntityMetadataManager MetadataManager { get; }
+        protected BioEntitiesManager EntitiesManager { get; }
 
         protected ContentEntityController(
             BaseControllerContext<TEntity, ContentEntityQueryContext<TEntity>, TRepository> context,
-            BioEntityMetadataManager metadataManager, ContentBlocksRepository blocksRepository) : base(context)
+            BioEntitiesManager entitiesManager, ContentBlocksRepository blocksRepository) : base(context)
         {
             _blocksRepository = blocksRepository;
-            MetadataManager = metadataManager;
+            EntitiesManager = entitiesManager;
         }
 
         private ContentBlock CreateBlock(string type)
         {
-            var blockType = MetadataManager.GetBlocksMetadata().Where(entityMetadata =>
+            var blockType = EntitiesManager.GetBlocksMetadata().Where(entityMetadata =>
                     entityMetadata.Type == type &&
                     typeof(ContentBlock).IsAssignableFrom(entityMetadata.ObjectType))
                 .Select(e => e.ObjectType).FirstOrDefault();

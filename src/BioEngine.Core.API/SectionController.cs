@@ -21,8 +21,8 @@ namespace BioEngine.Core.API
         where TRepository : IContentEntityRepository<TEntity, ContentEntityQueryContext<TEntity>>
     {
         protected SectionController(BaseControllerContext<TEntity, ContentEntityQueryContext<TEntity>, TRepository> context,
-            BioEntityMetadataManager metadataManager,
-            ContentBlocksRepository blocksRepository) : base(context, metadataManager, blocksRepository)
+            BioEntitiesManager entitiesManager,
+            ContentBlocksRepository blocksRepository) : base(context, entitiesManager, blocksRepository)
         {
         }
 
