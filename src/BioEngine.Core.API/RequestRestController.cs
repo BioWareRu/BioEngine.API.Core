@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Core.Abstractions;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
-using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
 using BioEngine.Core.Repository;
 using BioEngine.Core.Web;
@@ -13,16 +13,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace BioEngine.Core.API
 {
     public abstract class
-        RequestRestController<TEntity, TQueryContext, TRepository, TResponse, TRequest> : ResponseRestController<TEntity
-            , TQueryContext, TRepository,
+        RequestRestController<TEntity, TRepository, TResponse, TRequest> : ResponseRestController<TEntity
+            , TRepository,
             TResponse>
         where TEntity : class, IEntity
         where TResponse : class, IResponseRestModel<TEntity>
         where TRequest : class, IRequestRestModel<TEntity>
-        where TQueryContext : QueryContext<TEntity>, new()
-        where TRepository : IBioRepository<TEntity, TQueryContext>
+        where TRepository : IBioRepository<TEntity>
     {
-        protected RequestRestController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) :
+        protected RequestRestController(BaseControllerContext<TEntity, TRepository> context) :
             base(context)
         {
         }
@@ -131,14 +130,13 @@ namespace BioEngine.Core.API
     }
 
     public abstract class
-        ResponseRequestRestController<TEntity, TQueryContext, TRepository, TRequestResponse> :
-            RequestRestController<TEntity, TQueryContext, TRepository, TRequestResponse, TRequestResponse>
+        ResponseRequestRestController<TEntity, TRepository, TRequestResponse> :
+            RequestRestController<TEntity, TRepository, TRequestResponse, TRequestResponse>
         where TEntity : class, IEntity
         where TRequestResponse : class, IResponseRestModel<TEntity>, IRequestRestModel<TEntity>
-        where TQueryContext : QueryContext<TEntity>, new()
-        where TRepository : IBioRepository<TEntity, TQueryContext>
+        where TRepository : IBioRepository<TEntity>
     {
-        protected ResponseRequestRestController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) :
+        protected ResponseRequestRestController(BaseControllerContext<TEntity, TRepository> context) :
             base(context)
         {
         }

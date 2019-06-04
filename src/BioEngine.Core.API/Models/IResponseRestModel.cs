@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BioEngine.Core.Entities;
+using BioEngine.Core.Abstractions;
 using ContentBlock = BioEngine.Core.API.Entities.ContentBlock;
 
 namespace BioEngine.Core.API.Models

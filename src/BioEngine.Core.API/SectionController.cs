@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using BioEngine.Core.Abstractions;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
@@ -18,9 +19,9 @@ namespace BioEngine.Core.API
         where TData : ITypedData, new()
         where TResponse : class, IContentResponseRestModel<TEntity>
         where TRequest : SectionRestModel<TEntity>, IContentRequestRestModel<TEntity>
-        where TRepository : IContentEntityRepository<TEntity, ContentEntityQueryContext<TEntity>>
+        where TRepository : IContentEntityRepository<TEntity>
     {
-        protected SectionController(BaseControllerContext<TEntity, ContentEntityQueryContext<TEntity>, TRepository> context,
+        protected SectionController(BaseControllerContext<TEntity, TRepository> context,
             BioEntitiesManager entitiesManager,
             ContentBlocksRepository blocksRepository) : base(context, entitiesManager, blocksRepository)
         {
@@ -37,14 +38,13 @@ namespace BioEngine.Core.API
     }
 
     public abstract class
-        SectionController<TEntity, TQueryContext, TRepository, TResponse> : ResponseRestController<TEntity,
-            TQueryContext, TRepository, TResponse>
+        SectionController<TEntity, TRepository, TResponse> : ResponseRestController<TEntity,
+            TRepository, TResponse>
         where TEntity : Section, IEntity
         where TResponse : IResponseRestModel<TEntity>
-        where TRepository : IBioRepository<TEntity, TQueryContext>
-        where TQueryContext : QueryContext<TEntity>, new()
+        where TRepository : IBioRepository<TEntity>
     {
-        protected SectionController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) : base(context)
+        protected SectionController(BaseControllerContext<TEntity, TRepository> context) : base(context)
         {
         }
     }

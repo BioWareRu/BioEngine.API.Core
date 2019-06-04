@@ -20,7 +20,7 @@ namespace BioEngine.Core.API
 
         protected override IMvcBuilder ConfigureMvc(IMvcBuilder mvcBuilder)
         {
-            return base.ConfigureMvc(mvcBuilder).AddApplicationPart(typeof(ResponseRestController<,,,>).Assembly);
+            return base.ConfigureMvc(mvcBuilder).AddApplicationPart(typeof(ResponseRestController<,,>).Assembly);
         }
 
         public override void ConfigureServices(IServiceCollection services)

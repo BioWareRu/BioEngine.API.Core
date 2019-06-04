@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BioEngine.Core.Abstractions;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.DB;
 using BioEngine.Core.Entities;
@@ -13,17 +14,17 @@ namespace BioEngine.Core.API
 {
     public abstract class
         ContentEntityController<TEntity, TRepository, TResponse, TRequest> : RequestRestController<
-            TEntity, ContentEntityQueryContext<TEntity>, TRepository, TResponse, TRequest>
+            TEntity, TRepository, TResponse, TRequest>
         where TEntity : class, IContentEntity, IEntity
         where TResponse : class, IContentResponseRestModel<TEntity>
         where TRequest : class, IContentRequestRestModel<TEntity>
-        where TRepository : IContentEntityRepository<TEntity, ContentEntityQueryContext<TEntity>>
+        where TRepository : IContentEntityRepository<TEntity>
     {
         private readonly ContentBlocksRepository _blocksRepository;
         protected BioEntitiesManager EntitiesManager { get; }
 
         protected ContentEntityController(
-            BaseControllerContext<TEntity, ContentEntityQueryContext<TEntity>, TRepository> context,
+            BaseControllerContext<TEntity, TRepository> context,
             BioEntitiesManager entitiesManager, ContentBlocksRepository blocksRepository) : base(context)
         {
             _blocksRepository = blocksRepository;

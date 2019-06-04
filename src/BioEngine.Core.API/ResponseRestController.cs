@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using BioEngine.Core.Abstractions;
 using BioEngine.Core.API.Interfaces;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
-using BioEngine.Core.DB;
-using BioEngine.Core.Entities;
-using BioEngine.Core.Repository;
+using BioEngine.Core.DB.Queries;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +16,14 @@ using Newtonsoft.Json;
 
 namespace BioEngine.Core.API
 {
-    public abstract class ResponseRestController<TEntity, TQueryContext, TRepository, TResponse> : ApiController
+    public abstract class ResponseRestController<TEntity, TRepository, TResponse> : ApiController
         where TResponse : IResponseRestModel<TEntity>
         where TEntity : class, IEntity
-        where TQueryContext : QueryContext<TEntity>, new()
-        where TRepository : IBioRepository<TEntity, TQueryContext>
+        where TRepository : IBioRepository<TEntity>
     {
         protected TRepository Repository { get; }
 
-        protected ResponseRestController(BaseControllerContext<TEntity, TQueryContext, TRepository> context) : base(context)
+        protected ResponseRestController(BaseControllerContext<TEntity, TRepository> context) : base(context)
         {
             Repository = context.Repository;
         }
@@ -72,9 +70,9 @@ namespace BioEngine.Core.API
             return Ok(result);
         }
 
-        protected TQueryContext GetQueryContext(int limit, int offset, string order, string filter)
+        protected IQueryContext<TEntity> GetQueryContext(int limit, int offset, string order, string filter)
         {
-            var context = new TQueryContext();
+            var context = HttpContext.RequestServices.GetRequiredService<IQueryContext<TEntity>>();
             if (limit > 0)
             {
                 context.Limit = limit;
