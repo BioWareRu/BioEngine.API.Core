@@ -70,9 +70,9 @@ namespace BioEngine.Core.API
             return Ok(result);
         }
 
-        protected IQueryContext<TEntity> GetQueryContext(int limit, int offset, string order, string filter)
+        protected QueryContext<TEntity> GetQueryContext(int limit, int offset, string order, string filter)
         {
-            var context = HttpContext.RequestServices.GetRequiredService<IQueryContext<TEntity>>();
+            var context = new QueryContext<TEntity>();
             if (limit > 0)
             {
                 context.Limit = limit;
