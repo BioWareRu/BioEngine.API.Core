@@ -1,5 +1,5 @@
 using System;
-using BioEngine.Core.Users;
+using BioEngine.Core.Abstractions;
 
 namespace BioEngine.Core.API.Entities
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -7,12 +8,11 @@ using BioEngine.Core.Abstractions;
 using BioEngine.Core.API.Interfaces;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
-using BioEngine.Core.DB.Queries;
+using BioEngine.Core.Extensions;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace BioEngine.Core.API
 {
@@ -39,7 +39,7 @@ namespace BioEngine.Core.API
         public virtual async Task<ActionResult<ListResponse<TResponse>>> GetAsync([FromQuery] int limit = 20,
             [FromQuery] int offset = 0, [FromQuery] string order = null, [FromQuery] string filter = null)
         {
-            var result = await Repository.GetAllAsync(GetQueryContext(limit, offset, order, filter));
+            var result = await Repository.GetAllAsync(q => ConfigureQuery(q, limit, offset, order, filter));
             return await ListAsync(result);
         }
 
@@ -66,28 +66,13 @@ namespace BioEngine.Core.API
         public virtual async Task<ActionResult<int>> CountAsync([FromQuery] int limit = 20,
             [FromQuery] int offset = 0, [FromQuery] string order = null, [FromQuery] string filter = null)
         {
-            var result = await Repository.CountAsync(GetQueryContext(limit, offset, order, filter));
+            var result = await Repository.CountAsync(query => ConfigureQuery(query, limit, offset, order, filter));
             return Ok(result);
         }
 
-        protected QueryContext<TEntity> GetQueryContext(int limit, int offset, string order, string filter)
+        protected IQueryable<TEntity> ConfigureQuery(IQueryable<TEntity> query, int limit, int offset, string order,
+            string filter)
         {
-            var context = new QueryContext<TEntity>();
-            if (limit > 0)
-            {
-                context.Limit = limit;
-            }
-
-            if (offset > 0)
-            {
-                context.Offset = offset;
-            }
-
-            if (!string.IsNullOrEmpty(order))
-            {
-                context.SetOrderByString(order);
-            }
-
             if (!string.IsNullOrEmpty(filter) &&
                 filter != "null")
             {
@@ -99,14 +84,28 @@ namespace BioEngine.Core.API
 
                 var data = Convert.FromBase64String(filter);
                 var decodedString = HttpUtility.UrlDecode(Encoding.UTF8.GetString(data));
-                var where = JsonConvert.DeserializeObject<List<QueryContextConditionsGroup>>(decodedString);
-                if (where != null)
+                if (!string.IsNullOrEmpty(decodedString))
                 {
-                    context.SetWhere(where);
+                    query = query.WhereByString(decodedString);
                 }
             }
 
-            return context;
+            if (!string.IsNullOrEmpty(order))
+            {
+                query = query.OrderByString(order);
+            }
+
+            if (limit > 0)
+            {
+                query = query.Take(limit);
+            }
+
+            if (offset > 0)
+            {
+                query = query.Skip(offset);
+            }
+
+            return query;
         }
 
         protected async Task<ActionResult<ListResponse<TResponse>>> ListAsync(
