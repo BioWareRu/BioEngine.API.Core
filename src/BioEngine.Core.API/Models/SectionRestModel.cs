@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using BioEngine.Core.Abstractions;
 using BioEngine.Core.Entities;
+using BioEngine.Core.Repository;
+using Microsoft.AspNetCore.Routing;
 
 namespace BioEngine.Core.API.Models
 {
@@ -17,6 +19,10 @@ namespace BioEngine.Core.API.Models
         {
             return await FillEntityAsync(entity);
         }
+
+        protected SectionRestModel(LinkGenerator linkGenerator, SitesRepository sitesRepository) : base(linkGenerator, sitesRepository)
+        {
+        }
     }
 
     public abstract class SectionRestModel<TEntity, TData> : SectionRestModel<TEntity>
@@ -30,6 +36,10 @@ namespace BioEngine.Core.API.Models
             entity = await base.FillEntityAsync(entity);
             entity.Data = Data;
             return entity;
+        }
+
+        protected SectionRestModel(LinkGenerator linkGenerator, SitesRepository sitesRepository) : base(linkGenerator, sitesRepository)
+        {
         }
     }
 
@@ -55,6 +65,10 @@ namespace BioEngine.Core.API.Models
                 TypeTitle = typedEntity.TypeTitle;
             }
         }
+
+        protected ResponseSectionRestModel(LinkGenerator linkGenerator, SitesRepository sitesRepository) : base(linkGenerator, sitesRepository)
+        {
+        }
     }
 
     public abstract class ResponseSectionRestModel<TEntity, TData> : SectionRestModel<TEntity>,
@@ -79,6 +93,10 @@ namespace BioEngine.Core.API.Models
             TypeTitle = entity.TypeTitle;
 
             Data = entity.Data;
+        }
+
+        protected ResponseSectionRestModel(LinkGenerator linkGenerator, SitesRepository sitesRepository) : base(linkGenerator, sitesRepository)
+        {
         }
     }
 }

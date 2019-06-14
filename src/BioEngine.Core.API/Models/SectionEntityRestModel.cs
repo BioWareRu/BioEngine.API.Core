@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using BioEngine.Core.Abstractions;
+using BioEngine.Core.Repository;
+using Microsoft.AspNetCore.Routing;
 
 namespace BioEngine.Core.API.Models
 {
@@ -23,6 +25,10 @@ namespace BioEngine.Core.API.Models
             entity.SectionIds = SectionIds;
             entity.TagIds = TagIds;
             return entity;
+        }
+
+        protected SectionEntityRestModel(LinkGenerator linkGenerator, SitesRepository sitesRepository) : base(linkGenerator, sitesRepository)
+        {
         }
     }
 }
