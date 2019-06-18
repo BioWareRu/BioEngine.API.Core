@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -8,7 +7,7 @@ using BioEngine.Core.Abstractions;
 using BioEngine.Core.API.Interfaces;
 using BioEngine.Core.API.Models;
 using BioEngine.Core.API.Response;
-using BioEngine.Core.Extensions;
+using BioEngine.Core.Repository;
 using BioEngine.Core.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -70,7 +69,7 @@ namespace BioEngine.Core.API
             return Ok(result);
         }
 
-        protected IQueryable<TEntity> ConfigureQuery(IQueryable<TEntity> query, int limit, int offset, string order,
+        protected BioRepositoryQuery<TEntity> ConfigureQuery(BioRepositoryQuery<TEntity> query, int limit, int offset, string order,
             string filter)
         {
             if (!string.IsNullOrEmpty(filter) &&
