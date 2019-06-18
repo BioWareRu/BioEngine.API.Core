@@ -16,7 +16,7 @@ namespace BioEngine.Core.API.Models
         public DateTimeOffset DateUpdated { get; set; }
 
         public string Title { get; set; }
-        public string Url { get; set; }
+        
 
         [JsonIgnore] public List<PropertiesEntry> Properties { get; set; }
         public List<PropertiesGroup> PropertiesGroups { get; set; }
@@ -28,7 +28,7 @@ namespace BioEngine.Core.API.Models
             DateUpdated = entity.DateUpdated;
             
             Title = entity.Title;
-            Url = entity.Url;
+            
             PropertiesGroups =
                 entity.Properties.Select(p => PropertiesGroup.Create(p, PropertiesProvider.GetSchema(p.Key))).ToList();
             return Task.CompletedTask;
@@ -39,7 +39,6 @@ namespace BioEngine.Core.API.Models
             entity ??= CreateEntity();
             entity.Id = Id;
             entity.Title = Title;
-            entity.Url = Url;
             entity.Properties = PropertiesGroups?.Select(s => s.GetPropertiesEntry()).ToList();
             return Task.FromResult(entity);
         }

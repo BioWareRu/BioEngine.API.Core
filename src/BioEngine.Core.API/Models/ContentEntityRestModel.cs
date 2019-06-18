@@ -15,6 +15,7 @@ namespace BioEngine.Core.API.Models
         public bool IsPublished { get; set; }
         public DateTimeOffset? DatePublished { get; set; }
         public List<PublicUrl> PublicUrls = new List<PublicUrl>();
+        public string Url { get; set; }
 
         public ContentEntityRestModel(LinkGenerator linkGenerator, SitesRepository sitesRepository)
         {
@@ -28,10 +29,18 @@ namespace BioEngine.Core.API.Models
             IsPublished = entity.IsPublished;
             DatePublished = entity.DatePublished;
             var sites = await _sitesRepository.GetByIdsAsync(entity.SiteIds);
+            Url = entity.Url;
             foreach (var site in sites)
             {
                 PublicUrls.Add(new PublicUrl {Url = _linkGenerator.GeneratePublicUrl(entity, site), Site = site});
             }
+        }
+
+        protected override async Task<TEntity> FillEntityAsync(TEntity entity)
+        {
+            entity = await base.FillEntityAsync(entity);
+            entity.Url = Url;
+            return entity;
         }
     }
 
