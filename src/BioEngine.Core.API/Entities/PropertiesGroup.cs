@@ -93,6 +93,7 @@ namespace BioEngine.Core.API.Entities
 
             else if (propertyType == typeof(bool))
                 parsedValue = value.ToString() == "1" ||
+                              value.ToString() == "True" ||
                               value.ToString() == "true" ||
                               value.ToString() == "on" ||
                               value.ToString() == "checked";
