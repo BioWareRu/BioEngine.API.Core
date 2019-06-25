@@ -88,6 +88,7 @@ namespace BioEngine.Core.API
                 }
 
                 await Repository.PublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
+                await AfterSaveAsync(entity);
                 return Model(await MapRestModelAsync(entity));
             }
 
@@ -106,6 +107,7 @@ namespace BioEngine.Core.API
                 }
 
                 await Repository.UnPublishAsync(entity, new BioRepositoryOperationContext {User = CurrentUser});
+                await AfterSaveAsync(entity);
                 return Model(await MapRestModelAsync(entity));
             }
 
